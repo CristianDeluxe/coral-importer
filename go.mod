@@ -15,7 +15,7 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.2
 	github.com/pkg/errors v0.9.1
 	github.com/satori/go.uuid v1.2.0
-	github.com/sirupsen/logrus v1.4.2
+	github.com/sirupsen/logrus v1.7.0
 	github.com/urfave/cli v1.22.1
 	golang.org/x/net v0.0.0-20201021035429-f5854403a974 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
