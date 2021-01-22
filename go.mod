@@ -20,5 +20,5 @@ require (
 	golang.org/x/net v0.0.0-20201021035429-f5854403a974 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
-	gopkg.in/go-playground/validator.v9 v9.29.1
+	gopkg.in/go-playground/validator.v9 v9.31.0
 )
