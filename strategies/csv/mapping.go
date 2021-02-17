@@ -36,7 +36,7 @@ type Comment struct {
 	CreatedAt string `conform:"trim" validate:"required"`
 	Body      string `conform:"trim" validate:"required_without=Rating"`
 	ParentID  string `conform:"trim"`
-	Status    string `conform:"trim"`
+	Status    string `conform:"trim" validate:"omitempty,oneof= APPROVED REJECTED NONE"`
 	Rating    int
 }
 
@@ -128,7 +128,7 @@ type User struct {
 	Email     string `conform:"trim" validate:"email"`
 	Username  string `conform:"trim" validate:"required"`
 	Role      string `conform:"trim"`
-	Banned    string `conform:"trim,lower"`
+	Banned    string `confirm:"trim"`
 	CreatedAt string `conform:"trim"`
 }
 
@@ -139,7 +139,7 @@ func ParseUser(fields []string) (*User, error) {
 		ID:        fields[0],
 		Email:     fields[1],
 		Username:  fields[2],
-		Role:      fields[3],
+		Role:      TranslateUserRole(fields[3]),
 		Banned:    fields[4],
 		CreatedAt: fields[5],
 	}

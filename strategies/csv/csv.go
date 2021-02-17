@@ -3,6 +3,7 @@ package csv
 import (
 	"fmt"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -22,8 +23,9 @@ type CommentReference struct {
 }
 
 type StoryReference struct {
-	Mode                string
-	CommentStatusCounts coral.CommentStatusCounts
+	Mode                         string
+	CommentStatusCounts          coral.CommentStatusCounts
+	CommentModerationQueueCounts coral.CommentModerationQueueCounts
 }
 
 type UserReference struct {
@@ -49,9 +51,9 @@ func Import(c *cli.Context) error {
 
 	// auth is the identifier for the type of authentication profiles to be
 	// created for the users.
-	authMode := c.String("auth")
-	if authMode != "local" && authMode != "sso" {
-		return errors.Errorf("invalid --auth provided \"%s\", only \"sso\" or \"local\" is supported", authMode)
+	auth := c.String("auth")
+	if auth != "local" && auth != "sso" {
+		return errors.Errorf("invalid --auth provided \"%s\", only \"sso\" or \"local\" is supported", auth)
 	}
 
 	// Validate that the collection files we expect exist in the input folder.
@@ -87,15 +89,15 @@ func Import(c *cli.Context) error {
 			return nil
 		}
 
-		if s.Mode == "" || s.Mode == "COMMENTS" {
-			// We don't need to store information about stories that have the default
-			// story mode.
-			stories[s.ID] = StoryReference{}
-		} else {
+		if s.Mode != "" && s.Mode != "COMMENTS" {
 			// Looks like this story has a non-standard story mode! Let's record it.
 			stories[s.ID] = StoryReference{
 				Mode: s.Mode,
 			}
+		} else {
+			// We don't need to store information about stories that have the default
+			// story mode.
+			stories[s.ID] = StoryReference{}
 		}
 
 		return nil
@@ -149,17 +151,13 @@ func Import(c *cli.Context) error {
 			story.CommentStatusCounts.Approved++
 			user.CommentStatusCounts.Approved++
 		case "NONE":
+			story.CommentModerationQueueCounts.Total++
+			story.CommentModerationQueueCounts.Queues.Unmoderated++
 			story.CommentStatusCounts.None++
 			user.CommentStatusCounts.None++
-		case "PREMOD":
-			story.CommentStatusCounts.Premod++
-			user.CommentStatusCounts.Premod++
 		case "REJECTED":
 			story.CommentStatusCounts.Rejected++
 			user.CommentStatusCounts.Rejected++
-		case "SYSTEM_WITHHELD":
-			story.CommentStatusCounts.SystemWithheld++
-			user.CommentStatusCounts.SystemWithheld++
 		}
 
 		stories[c.StoryID] = story
@@ -216,9 +214,6 @@ func Import(c *cli.Context) error {
 		comment.StoryID = c.StoryID
 		comment.CreatedAt.Time = createdAt
 
-		rawBody := strings.ReplaceAll(c.Body, "\n", "<br/>")
-		body := coral.HTML(p.Sanitize(rawBody))
-
 		// Let's handle some story mode specific operations.
 		if stories[c.StoryID].Mode == "RATINGS_AND_REVIEWS" {
 			if c.ParentID == "" {
@@ -227,7 +222,7 @@ func Import(c *cli.Context) error {
 					comment.Rating = c.Rating
 
 					// If the comment has a rating and a body, then it is a review!
-					if body != "" {
+					if c.Body != "" {
 						comment.Tags = append(comment.Tags, coral.CommentTag{
 							Type:      "REVIEW",
 							CreatedAt: comment.CreatedAt,
@@ -246,7 +241,7 @@ func Import(c *cli.Context) error {
 
 		revision := coral.Revision{
 			ID:           comment.ID,
-			Body:         body,
+			Body:         coral.HTML(p.Sanitize(strings.ReplaceAll(c.Body, "\n", "<br/>"))),
 			Metadata:     coral.RevisionMetadata{},
 			ActionCounts: map[string]int{},
 			CreatedAt: coral.Time{
@@ -342,27 +337,30 @@ func Import(c *cli.Context) error {
 		}
 
 		// role
-		user.Role = TranslateUserRole(u.Role)
+		user.Role = u.Role
 
 		// banned
-		switch u.Banned {
-		case "true":
-			user.Status.BanStatus.Active = true
-			user.Status.BanStatus.History = []coral.UserBanStatusHistory{
-				{
-					ID:        uuid.NewV1().String(),
-					Message:   "",
-					Active:    true,
-					CreatedAt: user.CreatedAt,
-				},
+		if u.Banned != "" {
+			banned, err := strconv.ParseBool(u.Banned)
+			if err != nil {
+				return errors.Wrap(err, "could not parse banned")
 			}
-		case "false":
-			fallthrough
-		default:
-			user.Status.BanStatus.Active = false
+
+			if banned {
+				user.Status.BanStatus.Active = true
+				user.Status.BanStatus.History = []coral.UserBanStatusHistory{
+					{
+						ID:        uuid.NewV1().String(),
+						Message:   "",
+						Active:    true,
+						CreatedAt: user.CreatedAt,
+					},
+				}
+			}
 		}
 
-		if authMode == "local" {
+		switch auth {
+		case "local":
 			user.Profiles = []coral.UserProfile{
 				{
 					ID:         user.Email,
@@ -371,7 +369,7 @@ func Import(c *cli.Context) error {
 					PasswordID: uuid.NewV4().String(),
 				},
 			}
-		} else if authMode == "sso" {
+		case "sso":
 			user.Profiles = []coral.UserProfile{
 				{
 					ID:           user.ID,
@@ -433,12 +431,7 @@ func Import(c *cli.Context) error {
 
 		// Get the status counts for this story.
 		story.CommentCounts.Status = stories[story.ID].CommentStatusCounts
-
-		// Begin updating the story's moderation queue counts.
-		story.CommentCounts.ModerationQueue.Total += story.CommentCounts.Status.None
-		story.CommentCounts.ModerationQueue.Total += story.CommentCounts.Status.Premod
-		story.CommentCounts.ModerationQueue.Queues.Unmoderated += story.CommentCounts.Status.None
-		story.CommentCounts.ModerationQueue.Queues.Unmoderated += story.CommentCounts.Status.Premod
+		story.CommentCounts.ModerationQueue = stories[story.ID].CommentModerationQueueCounts
 
 		// Copy over the metadata.
 		story.Metadata.Title = s.Title
