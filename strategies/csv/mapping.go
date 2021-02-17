@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"coral-importer/common"
+
 	"github.com/pkg/errors"
 )
 
@@ -49,7 +50,7 @@ func ParseComment(fields []string) (*Comment, error) {
 		CreatedAt: fields[3],
 		Body:      fields[4],
 		ParentID:  fields[5],
-		Status:    fields[6],
+		Status:    TranslateCommentStatus(fields[6]),
 	}
 
 	if fields[7] != "" {
