@@ -128,7 +128,7 @@ type User struct {
 	Email     string `conform:"trim" validate:"email"`
 	Username  string `conform:"trim" validate:"required"`
 	Role      string `conform:"trim"`
-	Banned    string `conform:"trim"`
+	Banned    string `conform:"trim,lower"`
 	CreatedAt string `conform:"trim"`
 }
 

@@ -18,8 +18,6 @@ import (
 )
 
 type CommentReference struct {
-	Status   string
-	StoryID  string
 	ParentID string
 }
 
@@ -92,8 +90,6 @@ func Import(c *cli.Context) error {
 		// Record each comment's status, story ID, and parent ID.
 
 		comments[c.ID] = CommentReference{
-			Status:   c.Status,
-			StoryID:  c.StoryID,
 			ParentID: c.ParentID,
 		}
 
@@ -131,6 +127,7 @@ func Import(c *cli.Context) error {
 
 	logrus.WithField("comments", len(comments)).Debug("finished loading comments into map")
 
+	startedStoryModeProcessingAt := time.Now()
 	logrus.Debug("starting story mode processing")
 
 	if err := utility.ReadCSV(storiesInputFileName, StoryColumns, func(line int, fields []string) error {
@@ -167,7 +164,7 @@ func Import(c *cli.Context) error {
 		return errors.Wrap(err, "could not generate story mode map")
 	}
 
-	logrus.Debug("finished story mode processing")
+	logrus.WithField("took", time.Since(startedStoryModeProcessingAt)).Debug("finished story mode processing")
 
 	startedReconstructionAt := time.Now()
 	logrus.Debug("reconstructing families based on parent id map")
@@ -342,7 +339,7 @@ func Import(c *cli.Context) error {
 		user.Role = TranslateUserRole(u.Role)
 
 		// banned
-		switch strings.ToLower(u.Banned) {
+		switch u.Banned {
 		case "true":
 			user.Status.BanStatus.Active = true
 			user.Status.BanStatus.History = []coral.UserBanStatusHistory{
@@ -438,12 +435,9 @@ func Import(c *cli.Context) error {
 		story.CommentCounts.ModerationQueue.Queues.Unmoderated += story.CommentCounts.Status.Premod
 
 		// Copy over the metadata.
-		if s.Title != "" {
-			story.Metadata.Title = s.Title
-		}
-		if s.Author != "" {
-			story.Metadata.Author = s.Author
-		}
+		story.Metadata.Title = s.Title
+		story.Metadata.Author = s.Author
+
 		if s.PublishedAt != "" {
 			publishedAt, err := time.Parse(time.RFC3339, s.PublishedAt)
 			if err != nil {
