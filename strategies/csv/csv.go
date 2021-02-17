@@ -70,10 +70,44 @@ func Import(c *cli.Context) error {
 	// Mark when we started.
 	started := time.Now()
 
+	startedStoryModeProcessingAt := time.Now()
+	logrus.Debug("starting story mode processing")
+
+	stories := make(map[string]StoryReference)
+
+	if err := utility.ReadCSV(storiesInputFileName, StoryColumns, func(line int, fields []string) error {
+
+		s, err := ParseStory(fields)
+		if err != nil {
+			logrus.WithError(err).WithFields(logrus.Fields{
+				"line":   line,
+				"fields": fields,
+			}).Warn("failed to parse story")
+
+			return nil
+		}
+
+		if s.Mode == "" || s.Mode == "COMMENTS" {
+			// We don't need to store information about stories that have the default
+			// story mode.
+			stories[s.ID] = StoryReference{}
+		} else {
+			// Looks like this story has a non-standard story mode! Let's record it.
+			stories[s.ID] = StoryReference{
+				Mode: s.Mode,
+			}
+		}
+
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "could not generate story mode map")
+	}
+
+	logrus.WithField("took", time.Since(startedStoryModeProcessingAt)).Debug("finished story mode processing")
+
 	logrus.Debug("starting comment map processing")
 
 	comments := make(map[string]CommentReference)
-	stories := make(map[string]StoryReference)
 	users := make(map[string]UserReference)
 
 	if err := utility.ReadCSV(commentsInputFileName, CommentColumns, func(line int, fields []string) error {
@@ -87,6 +121,18 @@ func Import(c *cli.Context) error {
 			return nil
 		}
 
+		// If the story that this comment is on doesn't exist, then skip the
+		// comment!
+		story, ok := stories[c.StoryID]
+		if !ok {
+			logrus.WithFields(logrus.Fields{
+				"line":      line,
+				"commentID": c.ID,
+				"storyID":   c.StoryID,
+			}).Warn("comment referenced story that doesn't exist")
+			return nil
+		}
+
 		// Record each comment's status, story ID, and parent ID.
 
 		comments[c.ID] = CommentReference{
@@ -96,7 +142,6 @@ func Import(c *cli.Context) error {
 		// Increment the status counts for the authors comments and the stories
 		// comments.
 
-		story := stories[c.StoryID]
 		user := users[c.AuthorID]
 
 		switch c.Status {
@@ -126,45 +171,6 @@ func Import(c *cli.Context) error {
 	}
 
 	logrus.WithField("comments", len(comments)).Debug("finished loading comments into map")
-
-	startedStoryModeProcessingAt := time.Now()
-	logrus.Debug("starting story mode processing")
-
-	if err := utility.ReadCSV(storiesInputFileName, StoryColumns, func(line int, fields []string) error {
-
-		s, err := ParseStory(fields)
-		if err != nil {
-			logrus.WithError(err).WithFields(logrus.Fields{
-				"line":   line,
-				"fields": fields,
-			}).Warn("failed to parse story")
-
-			return nil
-		}
-
-		if s.Mode == "" || s.Mode == "COMMENTS" {
-			// We don't need to store information about stories that have the default
-			// story mode.
-			return nil
-		}
-
-		// Looks like this story has a non-standard story mode! Let's record it.
-		story, ok := stories[s.ID]
-		if !ok {
-			story = StoryReference{
-				Mode: s.Mode,
-			}
-		} else {
-			story.Mode = s.Mode
-		}
-		stories[s.ID] = story
-
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "could not generate story mode map")
-	}
-
-	logrus.WithField("took", time.Since(startedStoryModeProcessingAt)).Debug("finished story mode processing")
 
 	startedReconstructionAt := time.Now()
 	logrus.Debug("reconstructing families based on parent id map")
