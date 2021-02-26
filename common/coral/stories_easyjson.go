@@ -28,7 +28,7 @@ func easyjsonE08b5de9DecodeCoralImporterCommonCoral(in *jlexer.Lexer, out *Story
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -143,7 +143,7 @@ func easyjsonE08b5de9DecodeCoralImporterCommonCoral1(in *jlexer.Lexer, out *Stor
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -280,7 +280,7 @@ func easyjsonE08b5de9DecodeCoralImporterCommonCoral2(in *jlexer.Lexer, out *Stor
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -293,11 +293,7 @@ func easyjsonE08b5de9DecodeCoralImporterCommonCoral2(in *jlexer.Lexer, out *Stor
 				in.Skip()
 			} else {
 				in.Delim('{')
-				if !in.IsDelim('}') {
-					out.Action = make(map[string]int)
-				} else {
-					out.Action = nil
-				}
+				out.Action = make(map[string]int)
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
@@ -394,7 +390,7 @@ func easyjsonE08b5de9DecodeCoralImporterCommonCoral3(in *jlexer.Lexer, out *Stor
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -441,11 +437,7 @@ func easyjsonE08b5de9DecodeCoralImporterCommonCoral3(in *jlexer.Lexer, out *Stor
 				in.Skip()
 			} else {
 				in.Delim('{')
-				if !in.IsDelim('}') {
-					out.Extra = make(map[string]interface{})
-				} else {
-					out.Extra = nil
-				}
+				out.Extra = make(map[string]interface{})
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
@@ -590,7 +582,7 @@ func easyjsonE08b5de9DecodeCoralImporterCommonCoral4(in *jlexer.Lexer, out *Mess
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -663,7 +655,7 @@ func easyjsonE08b5de9DecodeCoralImporterCommonCoral5(in *jlexer.Lexer, out *Comm
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -757,7 +749,7 @@ func easyjsonE08b5de9DecodeCoralImporterCommonCoral6(in *jlexer.Lexer, out *Comm
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -830,7 +822,7 @@ func easyjsonE08b5de9DecodeCoralImporterCommonCoral7(in *jlexer.Lexer, out *Comm
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()

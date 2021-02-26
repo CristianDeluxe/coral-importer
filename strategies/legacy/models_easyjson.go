@@ -29,7 +29,7 @@ func easyjsonD2b7633eDecodeCoralImporterStrategiesLegacy(in *jlexer.Lexer, out *
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -109,7 +109,7 @@ func easyjsonD2b7633eDecodeCoralImporterStrategiesLegacy1(in *jlexer.Lexer, out 
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -182,7 +182,7 @@ func easyjsonD2b7633eDecodeCoralImporterStrategiesLegacy2(in *jlexer.Lexer, out 
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -260,7 +260,7 @@ func easyjsonD2b7633eDecodeCoralImporterStrategiesLegacy3(in *jlexer.Lexer, out 
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -414,7 +414,7 @@ func easyjsonD2b7633eDecodeCoralImporterStrategiesLegacy4(in *jlexer.Lexer, out 
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -513,7 +513,7 @@ func easyjsonD2b7633eDecodeCoralImporterStrategiesLegacy5(in *jlexer.Lexer, out 
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -787,7 +787,7 @@ func easyjsonD2b7633eDecode(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -892,7 +892,7 @@ func easyjsonD2b7633eDecode4(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -996,7 +996,7 @@ func easyjsonD2b7633eDecode5(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -1066,7 +1066,7 @@ func easyjsonD2b7633eDecode3(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -1099,7 +1099,7 @@ func easyjsonD2b7633eDecode3(in *jlexer.Lexer, out *struct {
 							Message    string     `json:"message"`
 							Until      coral.Time `json:"until"`
 							CreatedAt  coral.Time `json:"created_at"`
-						}, 0, 1)
+						}, 0, 0)
 					} else {
 						out.History = []struct {
 							AssignedBy *string    `json:"assigned_by"`
@@ -1189,7 +1189,7 @@ func easyjsonD2b7633eDecode6(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -1281,7 +1281,7 @@ func easyjsonD2b7633eDecode2(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -1390,7 +1390,7 @@ func easyjsonD2b7633eDecode7(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -1479,7 +1479,7 @@ func easyjsonD2b7633eDecode1(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -1583,7 +1583,7 @@ func easyjsonD2b7633eDecode8(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -1657,7 +1657,7 @@ func easyjsonD2b7633eDecodeCoralImporterStrategiesLegacy6(in *jlexer.Lexer, out 
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -1753,7 +1753,7 @@ func easyjsonD2b7633eDecode9(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -1797,7 +1797,7 @@ func easyjsonD2b7633eDecodeCoralImporterStrategiesLegacy7(in *jlexer.Lexer, out 
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -1872,7 +1872,7 @@ func easyjsonD2b7633eDecodeCoralImporterStrategiesLegacy8(in *jlexer.Lexer, out 
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -2175,7 +2175,7 @@ func easyjsonD2b7633eDecode11(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -2188,13 +2188,9 @@ func easyjsonD2b7633eDecode11(in *jlexer.Lexer, out *struct {
 				in.Skip()
 			} else {
 				in.Delim('{')
-				if !in.IsDelim('}') {
-					out.Perspective = make(map[string]struct {
-						SummaryScore float64 `json:"summaryScore"`
-					})
-				} else {
-					out.Perspective = nil
-				}
+				out.Perspective = make(map[string]struct {
+					SummaryScore float64 `json:"summaryScore"`
+				})
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
@@ -2281,7 +2277,7 @@ func easyjsonD2b7633eDecode12(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -2329,7 +2325,7 @@ func easyjsonD2b7633eDecode10(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -2403,7 +2399,7 @@ func easyjsonD2b7633eDecodeCoralImporterStrategiesLegacy9(in *jlexer.Lexer, out 
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -2714,7 +2710,7 @@ func easyjsonD2b7633eDecode13(in *jlexer.Lexer, out *struct {
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -2830,7 +2826,7 @@ func easyjsonD2b7633eDecodeCoralImporterStrategiesLegacy10(in *jlexer.Lexer, out
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -2863,11 +2859,7 @@ func easyjsonD2b7633eDecodeCoralImporterStrategiesLegacy10(in *jlexer.Lexer, out
 				in.Skip()
 			} else {
 				in.Delim('{')
-				if !in.IsDelim('}') {
-					out.Metadata = make(map[string]interface{})
-				} else {
-					out.Metadata = nil
-				}
+				out.Metadata = make(map[string]interface{})
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()

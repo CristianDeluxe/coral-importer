@@ -28,7 +28,7 @@ func easyjsonD2b7633eDecodeCoralImporterStrategiesLivefyre(in *jlexer.Lexer, out
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -108,7 +108,7 @@ func easyjsonD2b7633eDecodeCoralImporterStrategiesLivefyre1(in *jlexer.Lexer, ou
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -130,7 +130,7 @@ func easyjsonD2b7633eDecodeCoralImporterStrategiesLivefyre1(in *jlexer.Lexer, ou
 				in.Delim('[')
 				if out.Comments == nil {
 					if !in.IsDelim(']') {
-						out.Comments = make([]Comment, 0, 1)
+						out.Comments = make([]Comment, 0, 0)
 					} else {
 						out.Comments = []Comment{}
 					}
@@ -236,7 +236,7 @@ func easyjsonD2b7633eDecodeCoralImporterStrategiesLivefyre2(in *jlexer.Lexer, ou
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()

@@ -28,7 +28,7 @@ func easyjsonF96a437cDecodeCoralImporterCommonCoral(in *jlexer.Lexer, out *Comme
 	}
 	in.Delim('{')
 	for !in.IsDelim('}') {
-		key := in.UnsafeString()
+		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		if in.IsNull() {
 			in.Skip()
@@ -73,11 +73,7 @@ func easyjsonF96a437cDecodeCoralImporterCommonCoral(in *jlexer.Lexer, out *Comme
 				in.Skip()
 			} else {
 				in.Delim('{')
-				if !in.IsDelim('}') {
-					out.Metadata = make(map[string]interface{})
-				} else {
-					out.Metadata = nil
-				}
+				out.Metadata = make(map[string]interface{})
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
@@ -103,11 +99,7 @@ func easyjsonF96a437cDecodeCoralImporterCommonCoral(in *jlexer.Lexer, out *Comme
 				in.Skip()
 			} else {
 				in.Delim('{')
-				if !in.IsDelim('}') {
-					out.Extra = make(map[string]interface{})
-				} else {
-					out.Extra = nil
-				}
+				out.Extra = make(map[string]interface{})
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
