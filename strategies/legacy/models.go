@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"coral-importer/common/coral"
+
 	uuid "github.com/satori/go.uuid"
 	"github.com/sirupsen/logrus"
 )
@@ -367,10 +368,10 @@ type User struct {
 func TranslateUserProfile(user *coral.User, in *User, profile UserProfile) *coral.UserProfile {
 	switch profile.Provider {
 	case "local":
-		user.Email = profile.ID
+		user.Email = strings.ToLower(profile.ID)
 
 		return &coral.UserProfile{
-			ID:         profile.ID,
+			ID:         strings.ToLower(profile.ID),
 			Type:       "local",
 			Password:   in.Password,
 			PasswordID: uuid.NewV4().String(),
