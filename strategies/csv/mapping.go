@@ -125,7 +125,7 @@ const UserColumns = 6
 // CSV format.
 type User struct {
 	ID        string `conform:"trim" validate:"required"`
-	Email     string `conform:"trim" validate:"email"`
+	Email     string `conform:"trim,email" validate:"email"`
 	Username  string `conform:"trim" validate:"required"`
 	Role      string `conform:"trim"`
 	Banned    string `confirm:"trim"`
