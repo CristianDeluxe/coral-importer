@@ -371,7 +371,7 @@ func TranslateUserProfile(user *coral.User, in *User, profile UserProfile) *cora
 		user.Email = strings.ToLower(profile.ID)
 
 		return &coral.UserProfile{
-			ID:         strings.ToLower(profile.ID),
+			ID:         user.Email,
 			Type:       "local",
 			Password:   in.Password,
 			PasswordID: uuid.NewV4().String(),

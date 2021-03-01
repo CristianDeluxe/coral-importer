@@ -1,6 +1,7 @@
 package csv
 
 import (
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -125,7 +126,7 @@ const UserColumns = 6
 // CSV format.
 type User struct {
 	ID        string `conform:"trim" validate:"required"`
-	Email     string `conform:"trim,email" validate:"email"`
+	Email     string `conform:"trim,email,lower" validate:"email"`
 	Username  string `conform:"trim" validate:"required"`
 	Role      string `conform:"trim"`
 	Banned    string `confirm:"trim"`
@@ -146,6 +147,15 @@ func ParseUser(fields []string) (*User, error) {
 
 	if err := common.Check(&user); err != nil {
 		return nil, errors.Wrap(err, "could not validate user")
+	}
+
+	matched, err := regexp.MatchString("[A-Z]", user.Email)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not verify the email had no uppercase characters")
+	}
+
+	if matched {
+		panic("found uppercase characters in email address")
 	}
 
 	return &user, nil

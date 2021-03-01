@@ -126,7 +126,7 @@ type User struct {
 	TenantID         string                 `json:"tenantID" validate:"required"`
 	ID               string                 `json:"id" conform:"trim" validate:"required"`
 	Username         string                 `json:"username" validate:"required"`
-	Email            string                 `json:"email,omitempty" validate:"email"`
+	Email            string                 `json:"email,omitempty" conform:"email,lower" validate:"email"`
 	Profiles         []UserProfile          `json:"profiles,omitempty"`
 	Role             string                 `json:"role" validate:"required,oneof=COMMENTER STAFF MODERATOR ADMIN"`
 	Notifications    UserNotifications      `json:"notifications"`
