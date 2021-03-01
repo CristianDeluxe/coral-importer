@@ -1,7 +1,6 @@
 package csv
 
 import (
-	"regexp"
 	"strconv"
 	"strings"
 
@@ -147,15 +146,6 @@ func ParseUser(fields []string) (*User, error) {
 
 	if err := common.Check(&user); err != nil {
 		return nil, errors.Wrap(err, "could not validate user")
-	}
-
-	matched, err := regexp.MatchString("[A-Z]", user.Email)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not verify the email had no uppercase characters")
-	}
-
-	if matched {
-		panic("found uppercase characters in email address")
 	}
 
 	return &user, nil
