@@ -138,6 +138,12 @@ func TranslateComment(tenantID, siteID string, in *Comment) *coral.Comment {
 	comment.StoryID = in.AssetID
 	comment.Status = TranslateCommentStatus(in.Status)
 	for _, tag := range in.Tags {
+		// If the tag name is not STAFF or FEATURED, then don't add it to the tags
+		// array! Coral Modern does not support any other tag from Coral Legacy.
+		if tag.Tag.Name != "STAFF" && tag.Tag.Name != "FEATURED" {
+			continue
+		}
+
 		commentTag := coral.CommentTag{
 			Type:      tag.Tag.Name,
 			CreatedAt: tag.CreatedAt,
