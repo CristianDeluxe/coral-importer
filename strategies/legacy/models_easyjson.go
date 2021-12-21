@@ -444,6 +444,8 @@ func easyjsonD2b7633eDecodeCoralImporterStrategiesLegacy4(in *jlexer.Lexer, out 
 					in.AddError((*out.LastAccountDownload).UnmarshalJSON(data))
 				}
 			}
+		case "displayName":
+			out.DisplayName = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -475,6 +477,11 @@ func easyjsonD2b7633eEncodeCoralImporterStrategiesLegacy4(out *jwriter.Writer, i
 		} else {
 			out.Raw((*in.LastAccountDownload).MarshalJSON())
 		}
+	}
+	{
+		const prefix string = ",\"displayName\":"
+		out.RawString(prefix)
+		out.String(string(in.DisplayName))
 	}
 	out.RawByte('}')
 }

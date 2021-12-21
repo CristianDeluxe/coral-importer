@@ -321,6 +321,7 @@ type UserNotifications struct {
 type UserMetadata struct {
 	Notifications       *UserNotifications `json:"notifications"`
 	LastAccountDownload *coral.Time        `json:"lastAccountDownload"`
+	DisplayName         string             `json:"displayName"`
 }
 
 type User struct {
@@ -402,7 +403,12 @@ func TranslateUserProfile(user *coral.User, in *User, profile UserProfile) *cora
 func TranslateUser(tenantID string, in *User) *coral.User {
 	user := coral.NewUser(tenantID)
 	user.ID = in.ID
-	user.Username = in.Username
+	// Handle metadata.displayName resolvers
+	if in.Metadata.DisplayName != "" {
+		user.Username = in.Metadata.DisplayName
+	} else {
+		user.Username = in.Username
+	}
 	user.Role = in.Role
 	user.CreatedAt = in.CreatedAt
 	user.IgnoredUsers = make([]coral.IgnoredUser, len(in.IgnoredUsers))

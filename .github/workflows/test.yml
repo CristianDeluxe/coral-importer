@@ -19,3 +19,8 @@ jobs:
           version: v1.35
       - name: Unit testing
         run: go test ./...
+      - name: Validate Generated Files
+        run: |
+          go install github.com/mailru/easyjson/easyjson@v0.7.7
+          go generate ./...
+          git diff --quiet || exit 1
