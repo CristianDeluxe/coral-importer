@@ -194,7 +194,20 @@ do
 done
 ```
 
+To update models run:
+```sh
+go generate ./...
+```
+
+To locally build an executable for testing use the output flag:
+```sh
+go build -o <location>
+```
+
 ## Changelog
+
+### v0.4.13
+- (coral) handles `metadata.displayName` values if present on legacy users
 
 ### v0.4.3
 
