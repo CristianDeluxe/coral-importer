@@ -403,12 +403,6 @@ func TranslateUserProfile(user *coral.User, in *User, profile UserProfile) *cora
 func TranslateUser(tenantID string, in *User) *coral.User {
 	user := coral.NewUser(tenantID)
 	user.ID = in.ID
-	// Handle metadata.displayName resolvers
-	if in.Metadata.DisplayName != "" {
-		user.Username = in.Metadata.DisplayName
-	} else {
-		user.Username = in.Username
-	}
 	user.Role = in.Role
 	user.CreatedAt = in.CreatedAt
 	user.IgnoredUsers = make([]coral.IgnoredUser, len(in.IgnoredUsers))
@@ -444,7 +438,8 @@ func TranslateUser(tenantID string, in *User) *coral.User {
 			user.Status.SuspensionStatus.History[i].CreatedBy = *history.AssignedBy
 		}
 	}
-
+	//set user.username for username status history, if a metadata.displayName value is present this will be overwritten 
+	user.Username = in.Username
 	user.Status.BanStatus.Active = in.Status.Banned.Status
 	user.Status.BanStatus.History = make([]coral.UserBanStatusHistory, len(in.Status.Banned.History))
 	for i, history := range in.Status.Banned.History {
@@ -492,6 +487,10 @@ func TranslateUser(tenantID string, in *User) *coral.User {
 	}
 
 	if in.Metadata != nil {
+		// Handle value of metadata.displayName if present, otherwise username was set during username status history 
+		if in.Metadata.DisplayName != "" {
+			user.Username = in.Metadata.DisplayName
+		} 
 		if in.Metadata.Notifications != nil && in.Metadata.Notifications.Settings != nil {
 			if in.Metadata.Notifications.Settings.OnReply != nil {
 				user.Notifications.OnReply = *in.Metadata.Notifications.Settings.OnReply
