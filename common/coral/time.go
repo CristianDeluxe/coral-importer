@@ -2,6 +2,7 @@ package coral
 
 import (
 	"encoding/json"
+	"reflect"
 	"time"
 
 	"github.com/pkg/errors"
@@ -32,15 +33,25 @@ func (t *Time) UnmarshalJSON(data []byte) error {
 	case map[string]interface{}:
 		date, ok := v["$date"].(string)
 		if !ok || date == "" {
-			// Try to handle the case where we get something that looks like
-			// this: {"$date":{"$numberLong":"-62075098782000"}}
-			if _, ok := v["$date"].(map[string]int64); ok {
-				logrus.Warn("saw a date in the format: { $date: { $numberLong: -000 } }")
+			if obj, ok := v["$date"].(map[string]interface{}); ok {
+				// Try to handle the case where we get something that looks like
+				// this: {"$date":{"$numberLong":"-62075098782000"}}
+				if _, ok := obj["$numberLong"].(string); ok {
+					logrus.Warn("saw a date in the format: { $date: { $numberLong: \"-62075098782000\" } }")
 
-				return nil
+					return nil
+				}
+
+				// Try to handle the case where we get something that looks like
+				// this: {"$date":{"$numberLong":-62075098782000"}
+				if _, ok := obj["$numberLong"].(float64); ok {
+					logrus.Warn("saw a date in the format: { $date: { $numberLong: \"-62075098782000\" } }")
+
+					return nil
+				}
 			}
 
-			return errors.Errorf("invalid format: %#v", v)
+			return errors.Errorf("invalid format: %#v, %s", v["$date"], reflect.TypeOf(v["$date"]))
 		}
 
 		tt, err := time.Parse(time.RFC3339, date)
