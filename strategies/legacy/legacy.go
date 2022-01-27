@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"time"
 
-	"coral-importer/common"
-	"coral-importer/common/coral"
-	"coral-importer/common/pipeline"
+	"github.com/coralproject/coral-importer/common"
+	"github.com/coralproject/coral-importer/common/coral"
+	"github.com/coralproject/coral-importer/common/pipeline"
 	easyjson "github.com/mailru/easyjson"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"

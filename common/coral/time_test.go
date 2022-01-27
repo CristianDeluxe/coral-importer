@@ -1,8 +1,9 @@
 package coral_test
 
 import (
-	"coral-importer/common/coral"
 	"testing"
+
+	"github.com/coralproject/coral-importer/common/coral"
 )
 
 func TestTimeUnmarshalJSON(t *testing.T) {

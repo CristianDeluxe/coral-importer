@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	"coral-importer/common"
-	"coral-importer/common/coral"
+	"github.com/coralproject/coral-importer/common"
+	"github.com/coralproject/coral-importer/common/coral"
 )
 
 func TestComment(t *testing.T) {

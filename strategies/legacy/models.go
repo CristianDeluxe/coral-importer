@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"coral-importer/common/coral"
+	"github.com/coralproject/coral-importer/common/coral"
 
 	uuid "github.com/satori/go.uuid"
 	"github.com/sirupsen/logrus"
@@ -438,7 +438,7 @@ func TranslateUser(tenantID string, in *User) *coral.User {
 			user.Status.SuspensionStatus.History[i].CreatedBy = *history.AssignedBy
 		}
 	}
-	//set user.username for username status history, if a metadata.displayName value is present this will be overwritten 
+	//set user.username for username status history, if a metadata.displayName value is present this will be overwritten
 	user.Username = in.Username
 	user.Status.BanStatus.Active = in.Status.Banned.Status
 	user.Status.BanStatus.History = make([]coral.UserBanStatusHistory, len(in.Status.Banned.History))
@@ -487,10 +487,10 @@ func TranslateUser(tenantID string, in *User) *coral.User {
 	}
 
 	if in.Metadata != nil {
-		// Handle value of metadata.displayName if present, otherwise username was set during username status history 
+		// Handle value of metadata.displayName if present, otherwise username was set during username status history
 		if in.Metadata.DisplayName != "" {
 			user.Username = in.Metadata.DisplayName
-		} 
+		}
 		if in.Metadata.Notifications != nil && in.Metadata.Notifications.Settings != nil {
 			if in.Metadata.Notifications.Settings.OnReply != nil {
 				user.Notifications.OnReply = *in.Metadata.Notifications.Settings.OnReply

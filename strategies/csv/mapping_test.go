@@ -1,9 +1,10 @@
 package csv_test
 
 import (
-	"coral-importer/strategies/csv"
 	"regexp"
 	"testing"
+
+	"github.com/coralproject/coral-importer/strategies/csv"
 )
 
 func TestParseUser(t *testing.T) {

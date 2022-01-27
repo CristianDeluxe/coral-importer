@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"coral-importer/common"
+	"github.com/coralproject/coral-importer/common"
 
 	"github.com/pkg/errors"
 )

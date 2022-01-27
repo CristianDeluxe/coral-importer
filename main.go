@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"os"
 
-	"coral-importer/common"
-	"coral-importer/common/coral"
-	"coral-importer/strategies/csv"
-	"coral-importer/strategies/legacy"
-	"coral-importer/strategies/livefyre"
+	"github.com/coralproject/coral-importer/common"
+	"github.com/coralproject/coral-importer/common/coral"
+	"github.com/coralproject/coral-importer/strategies/csv"
+	"github.com/coralproject/coral-importer/strategies/legacy"
+	"github.com/coralproject/coral-importer/strategies/livefyre"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -29,7 +29,7 @@ const (
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "coral-importer"
+	app.Name = "github.com/coralproject/coral-importer"
 	app.Usage = "imports comment exports from other providers into Coral"
 	app.Version = fmt.Sprintf("%v, commit %v, built at %v against migration %d", version, commit, date, CurrentMigrationVersion)
 	app.Flags = []cli.Flag{

@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"coral-importer/common"
-	"coral-importer/common/coral"
-	"coral-importer/internal/utility"
+	"github.com/coralproject/coral-importer/common"
+	"github.com/coralproject/coral-importer/common/coral"
+	"github.com/coralproject/coral-importer/internal/utility"
 
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/pkg/errors"
