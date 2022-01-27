@@ -1,4 +1,4 @@
-module coral-importer
+module github.com/coralproject/coral-importer
 
 go 1.15
 
