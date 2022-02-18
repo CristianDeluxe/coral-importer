@@ -42,9 +42,8 @@ func main() {
 			Usage: "output logs in JSON",
 		},
 		cli.Int64Flag{
-			Name:     "migrationID",
-			Usage:    "ID of the most recent migration associated with your installation",
-			Required: true,
+			Name:  "migrationID",
+			Usage: "ID of the most recent migration associated with your installation",
 		},
 		cli.BoolFlag{
 			Name:  "forceSkipMigrationCheck",
@@ -85,7 +84,7 @@ func main() {
 		{
 			Name:   "csv",
 			Usage:  "a migrator designed to migrate data from the standardized CSV format",
-			Action: csv.Import,
+			Action: csv.CLI,
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:     "tenantID",
@@ -117,7 +116,7 @@ func main() {
 		{
 			Name:   "livefyre",
 			Usage:  "a migrator designed to migrate data from the LiveFyre platform",
-			Action: livefyre.Import,
+			Action: livefyre.CLI,
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:     "tenantID",
@@ -153,7 +152,7 @@ func main() {
 		{
 			Name:   "legacy",
 			Usage:  "a migrator designed to import data from previous versions of Coral",
-			Action: legacy.Import,
+			Action: legacy.CLI,
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:     "tenantID",

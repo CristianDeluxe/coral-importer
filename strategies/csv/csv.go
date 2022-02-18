@@ -10,12 +10,13 @@ import (
 	"github.com/coralproject/coral-importer/common"
 	"github.com/coralproject/coral-importer/common/coral"
 	"github.com/coralproject/coral-importer/internal/utility"
+	"github.com/coralproject/coral-importer/strategies"
+	"github.com/urfave/cli"
 
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/pkg/errors"
 	uuid "github.com/satori/go.uuid"
 	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli"
 )
 
 type CommentReference struct {
@@ -32,8 +33,12 @@ type UserReference struct {
 	CommentStatusCounts coral.CommentStatusCounts
 }
 
+func CLI(c *cli.Context) error {
+	return Import(c)
+}
+
 // Import will perform the actual import process for the CSV strategy.
-func Import(c *cli.Context) error {
+func Import(c strategies.Context) error {
 	// tenantID is the ID of the Tenant that we are importing these documents
 	// for.
 	tenantID := c.String("tenantID")

@@ -30,6 +30,21 @@ type CommentStatusCounts struct {
 	SystemWithheld int `json:"SYSTEM_WITHHELD"`
 }
 
+func (csc *CommentStatusCounts) Increment(status string, amount int) {
+	switch status {
+	case "APPROVED":
+		csc.Approved += amount
+	case "NONE":
+		csc.None += amount
+	case "PREMOD":
+		csc.Premod += amount
+	case "REJECTED":
+		csc.Rejected += amount
+	case "SYSTEM_WITHHELD":
+		csc.SystemWithheld += amount
+	}
+}
+
 type StoryCommentCounts struct {
 	Action          map[string]int               `json:"action"`
 	Status          CommentStatusCounts          `json:"status"`

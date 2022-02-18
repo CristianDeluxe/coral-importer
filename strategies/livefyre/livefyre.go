@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/coralproject/coral-importer/common/pipeline"
+	"github.com/coralproject/coral-importer/strategies"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -28,9 +29,13 @@ func (t *Time) UnmarshalJSON(buf []byte) error {
 	return nil
 }
 
+func CLI(c *cli.Context) error {
+	return Import(c)
+}
+
 // Import will handle a data import task for importing comments into Coral
 // from a LiveFyre export.
-func Import(c *cli.Context) error {
+func Import(c strategies.Context) error {
 	// tenantID is the ID of the Tenant that we are importing these documents
 	// for.
 	tenantID := c.String("tenantID")
