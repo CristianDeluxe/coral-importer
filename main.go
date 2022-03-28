@@ -2,14 +2,13 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"os"
 
-	"github.com/coralproject/coral-importer/common"
 	"github.com/coralproject/coral-importer/common/coral"
 	"github.com/coralproject/coral-importer/strategies/csv"
 	"github.com/coralproject/coral-importer/strategies/legacy"
 	"github.com/coralproject/coral-importer/strategies/livefyre"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
@@ -28,22 +27,30 @@ const (
 )
 
 func main() {
+	// Configure the writer for the logger. We'll set this in the before hook of
+	// the CLI.
+	var logFile io.Closer
+	defer func() {
+		if logFile == nil {
+			return
+		}
+
+		logFile.Close()
+	}()
+
 	app := cli.NewApp()
 	app.Name = "github.com/coralproject/coral-importer"
 	app.Usage = "imports comment exports from other providers into Coral"
 	app.Version = fmt.Sprintf("%v, commit %v, built at %v against migration %d", version, commit, date, CurrentMigrationVersion)
 	app.Flags = []cli.Flag{
-		cli.BoolFlag{
-			Name:  "quiet",
-			Usage: "make output quieter",
-		},
-		cli.BoolFlag{
-			Name:  "json",
-			Usage: "output logs in JSON",
-		},
 		cli.Int64Flag{
 			Name:  "migrationID",
 			Usage: "ID of the most recent migration associated with your installation",
+		},
+		cli.StringFlag{
+			Name:     "log",
+			Required: true,
+			Usage:    "output directory for where the logs will be written to",
 		},
 		cli.BoolFlag{
 			Name:  "forceSkipMigrationCheck",
@@ -56,9 +63,16 @@ func main() {
 	}
 	app.Before = func(c *cli.Context) error {
 		// Configure the logger.
-		if err := common.ConfigureLogger(c); err != nil {
-			return errors.Wrap(err, "could not configure logger")
+		logrus.SetLevel(logrus.DebugLevel)
+		logrus.SetFormatter(&logrus.JSONFormatter{})
+
+		f, err := os.OpenFile(c.GlobalString("log"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+		if err != nil {
+			return cli.NewExitError(err.Error(), 1)
 		}
+		logFile = f
+
+		logrus.SetOutput(f)
 
 		// Check that the imported needs updating.
 		if c.GlobalBool("forceSkipMigrationCheck") {

@@ -59,7 +59,7 @@ func Import(c strategies.Context) error {
 
 	logrus.WithField("comments", len(ctx.comments)).Debug("finished loading comments into map")
 
-	if err := ProcessCommentActions(ctx); err != nil {
+	if err := WriteCommentActions(ctx); err != nil {
 		return errors.Wrap(err, "could not process comment actions")
 	}
 
@@ -76,7 +76,7 @@ func Import(c strategies.Context) error {
 	logrus.WithField("took", time.Since(startedReconstructionAt).String()).Debug("finished family reconstruction")
 
 	// Load all the comments in from the comments.json file.
-	if err := ProcessComments(ctx); err != nil {
+	if err := WriteComments(ctx); err != nil {
 		return errors.Wrap(err, "could not read comments json")
 	}
 
@@ -85,7 +85,7 @@ func Import(c strategies.Context) error {
 	runtime.GC()
 
 	// Process the stories now.
-	if err := ProcessStories(ctx); err != nil {
+	if err := WriteStories(ctx); err != nil {
 		return errors.Wrap(err, "could not process stories")
 	}
 
@@ -93,7 +93,7 @@ func Import(c strategies.Context) error {
 	ctx.ReleaseStories()
 	runtime.GC()
 
-	if err := ProcessUsers(ctx); err != nil {
+	if err := WriteUsers(ctx); err != nil {
 		return errors.Wrap(err, "could not process users")
 	}
 
@@ -131,14 +131,22 @@ func SeedCommentsReferences(ctx *Context) error {
 	})
 }
 
-func ProcessCommentActions(ctx *Context) error {
+func WriteCommentActions(ctx *Context) error {
 	commentActionsWriter, err := utility.NewJSONWriter(ctx.Filenames.Output.CommentActions)
 	if err != nil {
 		return errors.Wrap(err, "could not create commentActionsWriter")
 	}
 	defer commentActionsWriter.Close()
 
+	bar, err := utility.NewLineCounter("Writing Comment Actions", ctx.Filenames.Input.Actions)
+	if err != nil {
+		return errors.Wrap(err, "could not count actions file")
+	}
+	defer bar.Finish()
+
 	return utility.ReadJSON(ctx.Filenames.Input.Actions, func(line int, data []byte) error {
+		defer bar.Increment()
+
 		// Parse the Action from the file.
 		var in Action
 		if err := easyjson.Unmarshal(data, &in); err != nil {
@@ -187,14 +195,22 @@ func ProcessCommentActions(ctx *Context) error {
 	})
 }
 
-func ProcessComments(ctx *Context) error {
+func WriteComments(ctx *Context) error {
 	commentsWriter, err := utility.NewJSONWriter(ctx.Filenames.Output.Comments)
 	if err != nil {
 		return errors.Wrap(err, "could not create comments writer")
 	}
 	defer commentsWriter.Close()
 
+	bar, err := utility.NewLineCounter("Writing Comments", ctx.Filenames.Input.Comments)
+	if err != nil {
+		return errors.Wrap(err, "could not count comments file")
+	}
+	defer bar.Finish()
+
 	return utility.ReadJSON(ctx.Filenames.Input.Comments, func(line int, data []byte) error {
+		defer bar.Increment()
+
 		// Parse the Comment from the file.
 		var in Comment
 		if err := easyjson.Unmarshal(data, &in); err != nil {
@@ -246,15 +262,22 @@ func ProcessComments(ctx *Context) error {
 	})
 }
 
-func ProcessStories(ctx *Context) error {
+func WriteStories(ctx *Context) error {
 	storiesWriter, err := utility.NewJSONWriter(ctx.Filenames.Output.Stories)
-	// storiesWriter, err := utility.NewJSONWriter(storiesOutputFilename)
 	if err != nil {
 		return errors.Wrap(err, "could not create stories writer")
 	}
 	defer storiesWriter.Close()
 
+	bar, err := utility.NewLineCounter("Writing Stories", ctx.Filenames.Input.Assets)
+	if err != nil {
+		return errors.Wrap(err, "could not count assets file")
+	}
+	defer bar.Finish()
+
 	return utility.ReadJSON(ctx.Filenames.Input.Assets, func(line int, data []byte) error {
+		defer bar.Increment()
+
 		// Parse the asset from the file.
 		var in Asset
 		if err := easyjson.Unmarshal(data, &in); err != nil {
@@ -295,15 +318,22 @@ func ProcessStories(ctx *Context) error {
 	})
 }
 
-func ProcessUsers(ctx *Context) error {
-	// usersWriter, err := utility.NewJSONWriter(usersOutputFilename)
+func WriteUsers(ctx *Context) error {
 	usersWriter, err := utility.NewJSONWriter(ctx.Filenames.Output.Users)
 	if err != nil {
 		return errors.Wrap(err, "could not create users writer")
 	}
 	defer usersWriter.Close()
 
+	bar, err := utility.NewLineCounter("Writing Users", ctx.Filenames.Input.Users)
+	if err != nil {
+		return errors.Wrap(err, "could not count users file")
+	}
+	defer bar.Finish()
+
 	return utility.ReadJSON(ctx.Filenames.Input.Users, func(line int, data []byte) error {
+		defer bar.Increment()
+
 		// Parse the user from the file.
 		var in User
 		if err := easyjson.Unmarshal(data, &in); err != nil {

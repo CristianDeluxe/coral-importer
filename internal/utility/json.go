@@ -89,6 +89,12 @@ func ReadJSON(fileName string, fn JSONReaderFn) error {
 		// Increment the line count.
 		lines++
 
+		// We're reading JSON, and if the document is less than or equal to two
+		// characters there is no content to read!
+		if len(line) <= 2 {
+			continue
+		}
+
 		// Send the input to a processor.
 		if err := fn(lines, []byte(line)); err != nil {
 			return errors.Wrap(err, "could not operate on the line")
