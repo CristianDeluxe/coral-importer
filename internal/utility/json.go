@@ -7,7 +7,6 @@ import (
 
 	"github.com/mailru/easyjson"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 )
 
 func NewJSONWriter(fileName string) (*JSONWriter, error) {
@@ -54,8 +53,6 @@ func (c *JSONWriter) Close() error {
 	if err := c.f.Close(); err != nil {
 		return errors.Wrap(err, "could not close file")
 	}
-
-	logrus.WithField("documents", c.documents).WithField("fileName", c.filename).Info("wrote documents")
 
 	return nil
 }

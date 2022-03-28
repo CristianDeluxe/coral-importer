@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/coralproject/coral-importer/common/coral"
+	"github.com/coralproject/coral-importer/internal/warnings"
 
 	uuid "github.com/satori/go.uuid"
 	"github.com/sirupsen/logrus"
@@ -394,7 +395,9 @@ func TranslateUserProfile(user *coral.User, in *User, profile UserProfile) *cora
 			Type: "google",
 		}
 	default:
-		logrus.WithField("provider", profile.Provider).Warn("unsupported provider not imported")
+		warnings.UnsupportedUserProfileProvider.OnceWith(func() {
+			logrus.WithField("provider", profile.Provider).Warn("unsupported provider not imported")
+		}, profile.Provider)
 
 		return nil
 	}

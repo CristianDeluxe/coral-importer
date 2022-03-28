@@ -7,6 +7,7 @@ import (
 
 	"github.com/coralproject/coral-importer/common"
 	"github.com/coralproject/coral-importer/internal/utility"
+	"github.com/coralproject/coral-importer/internal/warnings"
 	"github.com/coralproject/coral-importer/strategies"
 	easyjson "github.com/mailru/easyjson"
 	"github.com/pkg/errors"
@@ -157,7 +158,9 @@ func WriteCommentActions(ctx *Context) error {
 
 		// Ignore the action if it's not a comment action.
 		if in.ItemType != "COMMENTS" {
-			logrus.WithField("line", line).Warn("skipping non-comment action")
+			warnings.NonCommentAction.Once(func() {
+				logrus.WithField("line", line).Warn("skipping non-comment action")
+			})
 
 			return nil
 		}
