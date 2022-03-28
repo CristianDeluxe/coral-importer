@@ -6,6 +6,7 @@ import (
 	"github.com/coralproject/coral-importer/common"
 	"github.com/coralproject/coral-importer/common/coral"
 	"github.com/coralproject/coral-importer/strategies"
+	"github.com/sirupsen/logrus"
 )
 
 type CommentRef struct {
@@ -41,7 +42,16 @@ func NewContext(c strategies.Context) *Context {
 	// from the MongoDB export.
 	input := c.String("input")
 
+	// dryRun indicates that the strategy should not write files and is used for
+	// validation.
+	dryRun := c.Bool("dryRun")
+
+	if dryRun {
+		logrus.Warn("dry run is enabled, files will not be written")
+	}
+
 	return &Context{
+		DryRun:   dryRun,
 		TenantID: tenantID,
 		SiteID:   siteID,
 		Filenames: Filenames{
@@ -85,6 +95,7 @@ type Filenames struct {
 }
 
 type Context struct {
+	DryRun        bool
 	TenantID      string
 	SiteID        string
 	Filenames     Filenames

@@ -133,13 +133,13 @@ func SeedCommentsReferences(ctx *Context) error {
 }
 
 func WriteCommentActions(ctx *Context) error {
-	commentActionsWriter, err := utility.NewJSONWriter(ctx.Filenames.Output.CommentActions)
+	commentActionsWriter, err := utility.NewJSONWriter(ctx.DryRun, ctx.Filenames.Output.CommentActions)
 	if err != nil {
 		return errors.Wrap(err, "could not create commentActionsWriter")
 	}
 	defer commentActionsWriter.Close()
 
-	bar, err := utility.NewLineCounter("Writing Comment Actions", ctx.Filenames.Input.Actions)
+	bar, err := utility.NewLineCounter("Comment Actions", ctx.Filenames.Input.Actions)
 	if err != nil {
 		return errors.Wrap(err, "could not count actions file")
 	}
@@ -199,13 +199,13 @@ func WriteCommentActions(ctx *Context) error {
 }
 
 func WriteComments(ctx *Context) error {
-	commentsWriter, err := utility.NewJSONWriter(ctx.Filenames.Output.Comments)
+	commentsWriter, err := utility.NewJSONWriter(ctx.DryRun, ctx.Filenames.Output.Comments)
 	if err != nil {
 		return errors.Wrap(err, "could not create comments writer")
 	}
 	defer commentsWriter.Close()
 
-	bar, err := utility.NewLineCounter("Writing Comments", ctx.Filenames.Input.Comments)
+	bar, err := utility.NewLineCounter("Comments", ctx.Filenames.Input.Comments)
 	if err != nil {
 		return errors.Wrap(err, "could not count comments file")
 	}
@@ -266,13 +266,13 @@ func WriteComments(ctx *Context) error {
 }
 
 func WriteStories(ctx *Context) error {
-	storiesWriter, err := utility.NewJSONWriter(ctx.Filenames.Output.Stories)
+	storiesWriter, err := utility.NewJSONWriter(ctx.DryRun, ctx.Filenames.Output.Stories)
 	if err != nil {
 		return errors.Wrap(err, "could not create stories writer")
 	}
 	defer storiesWriter.Close()
 
-	bar, err := utility.NewLineCounter("Writing Stories", ctx.Filenames.Input.Assets)
+	bar, err := utility.NewLineCounter("Stories", ctx.Filenames.Input.Assets)
 	if err != nil {
 		return errors.Wrap(err, "could not count assets file")
 	}
@@ -322,13 +322,13 @@ func WriteStories(ctx *Context) error {
 }
 
 func WriteUsers(ctx *Context) error {
-	usersWriter, err := utility.NewJSONWriter(ctx.Filenames.Output.Users)
+	usersWriter, err := utility.NewJSONWriter(ctx.DryRun, ctx.Filenames.Output.Users)
 	if err != nil {
 		return errors.Wrap(err, "could not create users writer")
 	}
 	defer usersWriter.Close()
 
-	bar, err := utility.NewLineCounter("Writing Users", ctx.Filenames.Input.Users)
+	bar, err := utility.NewLineCounter("Users", ctx.Filenames.Input.Users)
 	if err != nil {
 		return errors.Wrap(err, "could not count users file")
 	}

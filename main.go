@@ -125,6 +125,10 @@ func main() {
 					Usage:    "folder where the outputted mongo files should be placed",
 					Required: true,
 				},
+				cli.BoolFlag{
+					Name:  "dryRun",
+					Usage: "processes data to validate inputs without actually writing files",
+				},
 			},
 		},
 		{
@@ -192,6 +196,10 @@ func main() {
 					Name:     "output",
 					Usage:    "folder where the outputted mongo files should be placed",
 					Required: true,
+				},
+				cli.BoolFlag{
+					Name:  "dryRun",
+					Usage: "processes data to validate inputs without actually writing files",
 				},
 			},
 		},

@@ -9,26 +9,38 @@ import (
 	"github.com/pkg/errors"
 )
 
-func NewJSONWriter(fileName string) (*JSONWriter, error) {
-	f, err := os.Create(fileName)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not create file for writing")
+type nopCloser struct {
+	io.Writer
+}
+
+func (nopCloser) Close() error { return nil }
+
+func NewJSONWriter(dryRun bool, fileName string) (*JSONWriter, error) {
+	var dest io.WriteCloser
+	if dryRun {
+		dest = nopCloser{io.Discard}
+	} else {
+		var err error
+		dest, err = os.Create(fileName)
+		if err != nil {
+			return nil, errors.Wrap(err, "could not create file for writing")
+		}
 	}
 
-	w := bufio.NewWriter(f)
+	w := bufio.NewWriter(dest)
 
 	return &JSONWriter{
-		f:        f,
+		f:        dest,
 		w:        w,
 		filename: fileName,
 	}, nil
 }
 
 type JSONWriter struct {
-	f         *os.File
-	w         *bufio.Writer
-	documents uint64
-	filename  string
+	f io.WriteCloser
+	w *bufio.Writer
+
+	filename string
 }
 
 func (c *JSONWriter) Write(doc easyjson.Marshaler) error {
@@ -39,8 +51,6 @@ func (c *JSONWriter) Write(doc easyjson.Marshaler) error {
 	if _, err := c.w.WriteString("\n"); err != nil {
 		return errors.Wrap(err, "could not write newline")
 	}
-
-	c.documents++
 
 	return nil
 }

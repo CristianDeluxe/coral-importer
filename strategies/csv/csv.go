@@ -54,6 +54,10 @@ func Import(c strategies.Context) error {
 	// from the MongoDB export.
 	input := c.String("input")
 
+	// dryRun indicates that the strategy should not write files and is used for
+	// validation.
+	dryRun := c.Bool("dryRun")
+
 	// auth is the identifier for the type of authentication profiles to be
 	// created for the users.
 	auth := c.String("auth")
@@ -189,7 +193,7 @@ func Import(c strategies.Context) error {
 	startedCommentsAt := time.Now()
 	logrus.Debug("processing comments")
 
-	commentsWriter, err := utility.NewJSONWriter(commentsOutputFileName)
+	commentsWriter, err := utility.NewJSONWriter(dryRun, commentsOutputFileName)
 	if err != nil {
 		return errors.Wrap(err, "could not create comment writer")
 	}
@@ -296,7 +300,7 @@ func Import(c strategies.Context) error {
 	startedUsersAt := time.Now()
 	logrus.Debug("processing users")
 
-	usersWriter, err := utility.NewJSONWriter(usersOutputFileName)
+	usersWriter, err := utility.NewJSONWriter(dryRun, usersOutputFileName)
 	if err != nil {
 		return errors.Wrap(err, "could not create users writer")
 	}
@@ -414,7 +418,7 @@ func Import(c strategies.Context) error {
 	startedStoriesAt := time.Now()
 	logrus.Debug("processing stories")
 
-	storiesWriter, err := utility.NewJSONWriter(storiesOutputFileName)
+	storiesWriter, err := utility.NewJSONWriter(dryRun, storiesOutputFileName)
 	if err != nil {
 		return errors.Wrap(err, "could not create story writer")
 	}
