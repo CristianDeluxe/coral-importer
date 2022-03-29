@@ -1,10 +1,16 @@
 package counter
 
-import "github.com/cheggaaa/pb"
+import (
+	"fmt"
 
-func New(total int) *Counter {
+	"github.com/cheggaaa/pb/v3"
+)
+
+func New(title string, total int) *Counter {
+	fmt.Println(title)
+
 	return &Counter{
-		c:     pb.StartNew(total),
+		c:     pb.Full.Start(total),
 		total: total,
 	}
 }
@@ -22,7 +28,7 @@ func (c *Counter) Increment() {
 
 func (c *Counter) Finish() {
 	if c.current < c.total {
-		c.c.SetTotal(c.current)
+		c.c.AddTotal(int64(c.current - c.total))
 	}
 
 	c.c.Finish()

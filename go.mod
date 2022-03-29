@@ -3,10 +3,9 @@ module github.com/coralproject/coral-importer
 go 1.15
 
 require (
-	github.com/cheggaaa/pb v1.0.29
+	github.com/cheggaaa/pb/v3 v3.0.8
 	github.com/corpix/uarand v0.1.1 // indirect
 	github.com/etgryphon/stringUp v0.0.0-20121020160746-31534ccd8cac // indirect
-	github.com/fatih/color v1.10.0 // indirect
 	github.com/go-playground/locales v0.12.1 // indirect
 	github.com/go-playground/universal-translator v0.16.0 // indirect
 	github.com/icrowley/fake v0.0.0-20180203215853-4178557ae428 // indirect
@@ -14,10 +13,8 @@ require (
 	github.com/leebenson/conform v0.0.0-20190822094432-4c55492f71d7
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/mailru/easyjson v0.7.7
-	github.com/mattn/go-runewidth v0.0.12 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.17
 	github.com/pkg/errors v0.9.1
-	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/urfave/cli v1.22.5

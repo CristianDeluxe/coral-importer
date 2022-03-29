@@ -2,7 +2,6 @@ package utility
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"os"
 
@@ -19,13 +18,12 @@ func Exists(fileName string) bool {
 }
 
 func NewLineCounter(title, sourceFileName string) (*counter.Counter, error) {
-	fmt.Println(title)
 	lines, err := CountLines(sourceFileName)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not count users file")
 	}
 
-	return counter.New(lines), nil
+	return counter.New(title, lines), nil
 }
 
 func CountLines(fileName string) (int, error) {

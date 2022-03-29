@@ -7,6 +7,7 @@ import (
 
 	"github.com/coralproject/coral-importer/common"
 	"github.com/coralproject/coral-importer/internal/utility"
+	"github.com/coralproject/coral-importer/internal/utility/counter"
 	"github.com/coralproject/coral-importer/internal/warnings"
 	"github.com/coralproject/coral-importer/strategies"
 	easyjson "github.com/mailru/easyjson"
@@ -69,10 +70,7 @@ func Import(c strategies.Context) error {
 	startedReconstructionAt := time.Now()
 	logrus.Debug("reconstructing families based on parent id map")
 
-	// Reconstruct all the family relationships from the parentID map.
-	for commentID, comment := range ctx.comments {
-		ctx.Reconstructor.AddIDs(commentID, comment.ParentID)
-	}
+	ReconstructFamilies(ctx)
 
 	logrus.WithField("took", time.Since(startedReconstructionAt).String()).Debug("finished family reconstruction")
 
@@ -106,7 +104,15 @@ func Import(c strategies.Context) error {
 }
 
 func SeedCommentsReferences(ctx *Context) error {
+	bar, err := utility.NewLineCounter("Loading Comments", ctx.Filenames.Input.Comments)
+	if err != nil {
+		return errors.Wrap(err, "could not count actions file")
+	}
+	defer bar.Finish()
+
 	return utility.ReadJSON(ctx.Filenames.Input.Comments, func(line int, data []byte) error {
+		defer bar.Increment()
+
 		var in Comment
 		if err := easyjson.Unmarshal(data, &in); err != nil {
 			logrus.WithField("line", line).Error(err)
@@ -132,6 +138,17 @@ func SeedCommentsReferences(ctx *Context) error {
 	})
 }
 
+func ReconstructFamilies(ctx *Context) {
+	bar := counter.New("Reconstructing Families", len(ctx.comments))
+	defer bar.Finish()
+
+	// Reconstruct all the family relationships from the parentID map.
+	for commentID, comment := range ctx.comments {
+		ctx.Reconstructor.AddIDs(commentID, comment.ParentID)
+		bar.Increment()
+	}
+}
+
 func WriteCommentActions(ctx *Context) error {
 	commentActionsWriter, err := utility.NewJSONWriter(ctx.DryRun, ctx.Filenames.Output.CommentActions)
 	if err != nil {
@@ -139,7 +156,7 @@ func WriteCommentActions(ctx *Context) error {
 	}
 	defer commentActionsWriter.Close()
 
-	bar, err := utility.NewLineCounter("Comment Actions", ctx.Filenames.Input.Actions)
+	bar, err := utility.NewLineCounter("Writing Comment Actions", ctx.Filenames.Input.Actions)
 	if err != nil {
 		return errors.Wrap(err, "could not count actions file")
 	}
@@ -205,7 +222,7 @@ func WriteComments(ctx *Context) error {
 	}
 	defer commentsWriter.Close()
 
-	bar, err := utility.NewLineCounter("Comments", ctx.Filenames.Input.Comments)
+	bar, err := utility.NewLineCounter("Writing Comments", ctx.Filenames.Input.Comments)
 	if err != nil {
 		return errors.Wrap(err, "could not count comments file")
 	}
@@ -272,7 +289,7 @@ func WriteStories(ctx *Context) error {
 	}
 	defer storiesWriter.Close()
 
-	bar, err := utility.NewLineCounter("Stories", ctx.Filenames.Input.Assets)
+	bar, err := utility.NewLineCounter("Writing Stories", ctx.Filenames.Input.Assets)
 	if err != nil {
 		return errors.Wrap(err, "could not count assets file")
 	}
@@ -328,7 +345,7 @@ func WriteUsers(ctx *Context) error {
 	}
 	defer usersWriter.Close()
 
-	bar, err := utility.NewLineCounter("Users", ctx.Filenames.Input.Users)
+	bar, err := utility.NewLineCounter("Writing Users", ctx.Filenames.Input.Users)
 	if err != nil {
 		return errors.Wrap(err, "could not count users file")
 	}
