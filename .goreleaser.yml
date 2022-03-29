@@ -15,6 +15,7 @@ release:
   github:
     owner: coralproject
     name: coral-importer
+  prerelease: auto
 
 checksum:
   name_template: "checksums.txt"
