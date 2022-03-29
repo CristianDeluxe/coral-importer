@@ -1,13 +1,12 @@
 package counter
 
 import (
-	"fmt"
-
 	"github.com/cheggaaa/pb/v3"
+	"github.com/fatih/color"
 )
 
 func New(title string, total int) *Counter {
-	fmt.Println(title)
+	color.New(color.Bold).Printf("\n%s\n", title)
 
 	return &Counter{
 		c:     pb.Full.Start(total),

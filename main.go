@@ -9,6 +9,7 @@ import (
 	"github.com/coralproject/coral-importer/strategies/csv"
 	"github.com/coralproject/coral-importer/strategies/legacy"
 	"github.com/coralproject/coral-importer/strategies/livefyre"
+	"github.com/fatih/color"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
@@ -44,11 +45,13 @@ func main() {
 	app.Version = fmt.Sprintf("%v, commit %v, built at %v against migration %d", version, commit, date, CurrentMigrationVersion)
 	app.Flags = []cli.Flag{
 		cli.Int64Flag{
-			Name:  "migrationID",
-			Usage: "ID of the most recent migration associated with your installation",
+			Name:   "migrationID",
+			EnvVar: "CORAL_MIGRATION_ID",
+			Usage:  "ID of the most recent migration associated with your installation",
 		},
 		cli.StringFlag{
 			Name:     "log",
+			EnvVar:   "CORAL_LOG",
 			Required: true,
 			Usage:    "output directory for where the logs will be written to",
 		},
@@ -91,6 +94,10 @@ func main() {
 			logrus.Info("monotonic cursor times are enabled, cursor times will be offset automatically")
 			coral.EnableMonotonicCursorTime()
 		}
+
+		color.New(color.Bold).Printf("coral-importer (%s)\n", c.App.Version)
+
+		// os.Exit(0)
 
 		return nil
 	}
@@ -174,11 +181,13 @@ func main() {
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:     "tenantID",
+					EnvVar:   "CORAL_TENANT_ID",
 					Usage:    "ID of the Tenant to import for",
 					Required: true,
 				},
 				cli.StringFlag{
 					Name:     "siteID",
+					EnvVar:   "CORAL_SITE_ID",
 					Usage:    "ID of the Site to import for",
 					Required: true,
 				},
@@ -189,11 +198,13 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:     "input",
+					EnvVar:   "CORAL_INPUT_DIRECTORY",
 					Usage:    "folder where the output from mongoexport is located, separated into collection named JSON files",
 					Required: true,
 				},
 				cli.StringFlag{
 					Name:     "output",
+					EnvVar:   "CORAL_OUTPUT_DIRECTORY",
 					Usage:    "folder where the outputted mongo files should be placed",
 					Required: true,
 				},

@@ -6,6 +6,7 @@ require (
 	github.com/cheggaaa/pb/v3 v3.0.8
 	github.com/corpix/uarand v0.1.1 // indirect
 	github.com/etgryphon/stringUp v0.0.0-20121020160746-31534ccd8cac // indirect
+	github.com/fatih/color v1.13.0 // indirect
 	github.com/go-playground/locales v0.12.1 // indirect
 	github.com/go-playground/universal-translator v0.16.0 // indirect
 	github.com/icrowley/fake v0.0.0-20180203215853-4178557ae428 // indirect
