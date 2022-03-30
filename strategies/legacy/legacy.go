@@ -132,7 +132,7 @@ func SeedCommentsReferences(ctx *Context) error {
 		defer ctx.Mutex.Unlock()
 
 		ref, _ := ctx.FindOrCreateComment(in.ID)
-		ref.Status = TranslateCommentStatus(in.Status)
+		ref.Status = intern.String(TranslateCommentStatus(in.Status))
 		ref.StoryID = in.AssetID
 		if in.ParentID != nil {
 			ref.ParentID = *in.ParentID
