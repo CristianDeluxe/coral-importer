@@ -11,7 +11,7 @@ import (
 	"github.com/coralproject/coral-importer/common/coral"
 	"github.com/coralproject/coral-importer/internal/utility"
 	"github.com/coralproject/coral-importer/strategies"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/pkg/errors"

@@ -15,7 +15,7 @@ import (
 	"github.com/coralproject/coral-importer/strategies/livefyre"
 	"github.com/fatih/color"
 	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 var (
@@ -54,22 +54,22 @@ func main() {
 	app.Usage = "imports comment exports from other providers into Coral"
 	app.Version = fmt.Sprintf("%v, commit %v, built at %v against migration %d", version, commit, date, CurrentMigrationVersion)
 	app.Flags = []cli.Flag{
-		cli.Int64Flag{
-			Name:   "migrationID",
-			EnvVar: "CORAL_MIGRATION_ID",
-			Usage:  "ID of the most recent migration associated with your installation",
+		&cli.Int64Flag{
+			Name:    "migrationID",
+			EnvVars: []string{"CORAL_MIGRATION_ID"},
+			Usage:   "ID of the most recent migration associated with your installation",
 		},
-		cli.StringFlag{
+		&cli.StringFlag{
 			Name:     "log",
-			EnvVar:   "CORAL_LOG",
+			EnvVars:  []string{"CORAL_LOG"},
 			Required: true,
 			Usage:    "output directory for where the logs will be written to",
 		},
-		cli.BoolFlag{
+		&cli.BoolFlag{
 			Name:  "forceSkipMigrationCheck",
 			Usage: "used to skip the migration version check",
 		},
-		cli.BoolFlag{
+		&cli.BoolFlag{
 			Name:  "disableMonotonicCursorTimes",
 			Usage: "used to disable monotonic cursor times which adds a offset to the same times to ensure all emitted times are unique",
 		},
@@ -79,7 +79,7 @@ func main() {
 		logrus.SetLevel(logrus.DebugLevel)
 		logrus.SetFormatter(&logrus.JSONFormatter{})
 
-		f, err := os.OpenFile(c.GlobalString("log"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+		f, err := os.OpenFile(c.String("log"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}
@@ -95,17 +95,17 @@ func main() {
 		}()
 
 		// Check that the imported needs updating.
-		if c.GlobalBool("forceSkipMigrationCheck") {
+		if c.Bool("forceSkipMigrationCheck") {
 			logrus.Warn("skipping migration check")
-		} else if c.GlobalInt64("migrationID") != CurrentMigrationVersion {
+		} else if c.Int64("migrationID") != CurrentMigrationVersion {
 			logrus.WithFields(logrus.Fields{
-				"migrationID":             c.GlobalInt("migrationID"),
+				"migrationID":             c.Int("migrationID"),
 				"currentMigrationVersion": CurrentMigrationVersion,
 			}).Fatal("migration version mismatch, update importer to support new migrations or skip with --forceSkipMigrationCheck")
 		}
 
 		// Add support for the monotonic cursor times if not disabled.
-		if c.GlobalBool("disableMonotonicCursorTimes") {
+		if c.Bool("disableMonotonicCursorTimes") {
 			logrus.Warn("monotonic cursor times are disabled, some entries may have duplicate cursor times")
 		} else {
 			logrus.Info("monotonic cursor times are enabled, cursor times will be offset automatically")
@@ -116,38 +116,38 @@ func main() {
 
 		return nil
 	}
-	app.Commands = []cli.Command{
+	app.Commands = []*cli.Command{
 		{
 			Name:   "csv",
 			Usage:  "a migrator designed to migrate data from the standardized CSV format",
 			Action: csv.CLI,
 			Flags: []cli.Flag{
-				cli.StringFlag{
+				&cli.StringFlag{
 					Name:     "tenantID",
 					Usage:    "ID of the Tenant to import for",
 					Required: true,
 				},
-				cli.StringFlag{
+				&cli.StringFlag{
 					Name:     "siteID",
 					Usage:    "ID of the Site to import for",
 					Required: true,
 				},
-				cli.StringFlag{
+				&cli.StringFlag{
 					Name:  "auth",
 					Usage: "type of profile to emit (One of \"sso\" or \"local\")",
 					Value: "sso",
 				},
-				cli.StringFlag{
+				&cli.StringFlag{
 					Name:     "input",
 					Usage:    "folder where the CSV input files are located",
 					Required: true,
 				},
-				cli.StringFlag{
+				&cli.StringFlag{
 					Name:     "output",
 					Usage:    "folder where the outputted mongo files should be placed",
 					Required: true,
 				},
-				cli.BoolFlag{
+				&cli.BoolFlag{
 					Name:  "dryRun",
 					Usage: "processes data to validate inputs without actually writing files",
 				},
@@ -158,31 +158,31 @@ func main() {
 			Usage:  "a migrator designed to migrate data from the LiveFyre platform",
 			Action: livefyre.CLI,
 			Flags: []cli.Flag{
-				cli.StringFlag{
+				&cli.StringFlag{
 					Name:     "tenantID",
 					Usage:    "ID of the Tenant to import for",
 					Required: true,
 				},
-				cli.StringFlag{
+				&cli.StringFlag{
 					Name:     "siteID",
 					Usage:    "ID of the Site to import for",
 					Required: true,
 				},
-				cli.BoolFlag{
+				&cli.BoolFlag{
 					Name:  "sso",
 					Usage: "when true, enables adding the SSO profile to generated users with the ID of the User",
 				},
-				cli.StringFlag{
+				&cli.StringFlag{
 					Name:     "comments",
 					Usage:    "newline separated JSON input file containing comments",
 					Required: true,
 				},
-				cli.StringFlag{
+				&cli.StringFlag{
 					Name:     "users",
 					Usage:    "newline separated JSON input file containing users",
 					Required: true,
 				},
-				cli.StringFlag{
+				&cli.StringFlag{
 					Name:     "output",
 					Usage:    "folder where the outputted mongo files should be placed",
 					Required: true,
@@ -194,36 +194,36 @@ func main() {
 			Usage:  "a migrator designed to import data from previous versions of Coral",
 			Action: legacy.CLI,
 			Flags: []cli.Flag{
-				cli.StringFlag{
+				&cli.StringFlag{
 					Name:     "tenantID",
-					EnvVar:   "CORAL_TENANT_ID",
+					EnvVars:  []string{"CORAL_TENANT_ID"},
 					Usage:    "ID of the Tenant to import for",
 					Required: true,
 				},
-				cli.StringFlag{
+				&cli.StringFlag{
 					Name:     "siteID",
-					EnvVar:   "CORAL_SITE_ID",
+					EnvVars:  []string{"CORAL_SITE_ID"},
 					Usage:    "ID of the Site to import for",
 					Required: true,
 				},
-				cli.StringFlag{
+				&cli.StringFlag{
 					Name:  "preferredPerspectiveModel",
 					Usage: "the preferred model to use for copying over toxicity scores",
 					Value: "SEVERE_TOXICITY",
 				},
-				cli.StringFlag{
+				&cli.StringFlag{
 					Name:     "input",
-					EnvVar:   "CORAL_INPUT_DIRECTORY",
+					EnvVars:  []string{"CORAL_INPUT_DIRECTORY"},
 					Usage:    "folder where the output from mongoexport is located, separated into collection named JSON files",
 					Required: true,
 				},
-				cli.StringFlag{
+				&cli.StringFlag{
 					Name:     "output",
-					EnvVar:   "CORAL_OUTPUT_DIRECTORY",
+					EnvVars:  []string{"CORAL_OUTPUT_DIRECTORY"},
 					Usage:    "folder where the outputted mongo files should be placed",
 					Required: true,
 				},
-				cli.BoolFlag{
+				&cli.BoolFlag{
 					Name:  "dryRun",
 					Usage: "processes data to validate inputs without actually writing files",
 				},

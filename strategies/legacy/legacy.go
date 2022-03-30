@@ -14,7 +14,7 @@ import (
 	easyjson "github.com/mailru/easyjson"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 // PreferredPerspectiveModel is the stored preferred perspective model that

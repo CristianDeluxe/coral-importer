@@ -9,7 +9,7 @@ import (
 	"github.com/coralproject/coral-importer/strategies"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 // Time is the time.Time representation that LiveFyre uses.
