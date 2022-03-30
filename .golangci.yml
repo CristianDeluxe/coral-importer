@@ -1,0 +1,5 @@
+issues:
+  exclude-rules:
+    - text: "unknown JSON option \"intern\""
+      linters:
+        - staticcheck
