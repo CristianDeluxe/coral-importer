@@ -99,7 +99,7 @@ func Import(c strategies.Context) error {
 
 	// Mark when we finished.
 	finished := time.Now()
-	logrus.WithField("took", finished.Sub(started).String()).Info("finished processing")
+	logrus.WithField("took", finished.Sub(started).String()).Debug("finished processing")
 
 	return nil
 }
