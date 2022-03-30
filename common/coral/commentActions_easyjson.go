@@ -37,19 +37,19 @@ func easyjsonF96a437cDecodeGithubComCoralprojectCoralImporterCommonCoral(in *jle
 		}
 		switch key {
 		case "tenantID":
-			out.TenantID = string(in.String())
+			out.TenantID = string(in.StringIntern())
 		case "id":
 			out.ID = string(in.String())
 		case "siteID":
-			out.SiteID = string(in.String())
+			out.SiteID = string(in.StringIntern())
 		case "actionType":
-			out.ActionType = string(in.String())
+			out.ActionType = string(in.StringIntern())
 		case "commentID":
 			out.CommentID = string(in.String())
 		case "commentRevisionID":
 			out.CommentRevisionID = string(in.String())
 		case "reason":
-			out.Reason = string(in.String())
+			out.Reason = string(in.StringIntern())
 		case "additionalDetails":
 			out.AdditionalDetails = string(in.String())
 		case "storyID":

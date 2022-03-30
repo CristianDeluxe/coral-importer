@@ -221,3 +221,13 @@ go build -o <location>
   `--disableMonotonicCursorTimes` flag. This means that every timestamp emitted
   that shares the same second time will automatically have it's ms time
   incremented to prevent collisions.
+
+<!-- STARTED 6.3GB RAM -->
+
+```bash
+cat __sensitive__/logs.json | jq 'select(.msg == "memory stats" and .run == 1648582446).alloc' | sort -n | tail -n1
+cat __sensitive__/logs.json | jq 'select(.msg == "memory stats" and .run == 1648584673).alloc' | sort -n | tail -n1
+
+cat __sensitive__/logs.json | jq 'select(.msg == "memory stats" and .run == 1648582446).sys' | sort -n | tail -n1
+cat __sensitive__/logs.json | jq 'select(.msg == "memory stats" and .run == 1648584673).sys' | sort -n | tail -n1
+```

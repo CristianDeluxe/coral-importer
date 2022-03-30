@@ -36,7 +36,7 @@ type Comment struct {
 	CreatedAt string `conform:"trim" validate:"required"`
 	Body      string `conform:"trim" validate:"required_without=Rating"`
 	ParentID  string `conform:"trim"`
-	Status    string `conform:"trim" validate:"omitempty,oneof= APPROVED REJECTED NONE"`
+	Status    string `conform:"trim,intern" validate:"omitempty,oneof= APPROVED REJECTED NONE"`
 	Rating    int
 }
 
@@ -81,7 +81,7 @@ type Story struct {
 	Author      string `conform:"trim"`
 	PublishedAt string `conform:"trim"`
 	ClosedAt    string `conform:"trim"`
-	Mode        string `conform:"trim,upper" validate:"omitempty,oneof= COMMENTS QA RATINGS_AND_REVIEWS"`
+	Mode        string `conform:"trim,upper,intern" validate:"omitempty,oneof= COMMENTS QA RATINGS_AND_REVIEWS"`
 }
 
 // ParseStory will extract a Story from the fields and perform validation on the

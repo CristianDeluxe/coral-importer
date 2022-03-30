@@ -2,10 +2,12 @@ package legacy
 
 import (
 	"path/filepath"
+	"sync"
 
 	"github.com/coralproject/coral-importer/common"
 	"github.com/coralproject/coral-importer/common/coral"
 	"github.com/coralproject/coral-importer/strategies"
+	"github.com/fatih/color"
 	"github.com/sirupsen/logrus"
 )
 
@@ -47,8 +49,11 @@ func NewContext(c strategies.Context) *Context {
 	dryRun := c.Bool("dryRun")
 
 	if dryRun {
+		color.New(color.Bold, color.FgRed).Println("--dryRun is enabled, files will not be written")
 		logrus.Warn("dry run is enabled, files will not be written")
 	}
+
+	var mutex sync.Mutex
 
 	return &Context{
 		DryRun:   dryRun,
@@ -69,6 +74,7 @@ func NewContext(c strategies.Context) *Context {
 			},
 		},
 		Reconstructor: common.NewReconstructor(),
+		Mutex:         &mutex,
 		users:         map[string]*UserRef{},
 		stories:       map[string]*StoryRef{},
 		comments:      map[string]*CommentRef{},
@@ -100,6 +106,7 @@ type Context struct {
 	SiteID        string
 	Filenames     Filenames
 	Reconstructor *common.Reconstructor
+	Mutex         *sync.Mutex
 
 	users    map[string]*UserRef
 	stories  map[string]*StoryRef

@@ -1,9 +1,12 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
+	"sync"
+	"time"
 
 	"github.com/coralproject/coral-importer/common/coral"
 	"github.com/coralproject/coral-importer/strategies/csv"
@@ -28,14 +31,20 @@ const (
 )
 
 func main() {
+	start := time.Now()
+
 	// Configure the writer for the logger. We'll set this in the before hook of
 	// the CLI.
+	ctx, cancel := context.WithCancel(context.Background())
+	var wg sync.WaitGroup
 	var logFile io.Closer
 	defer func() {
 		if logFile == nil {
 			return
 		}
 
+		cancel()
+		wg.Wait()
 		logFile.Close()
 	}()
 
@@ -77,6 +86,13 @@ func main() {
 
 		logrus.SetOutput(f)
 
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+
+			StartLoggingMemoryStats(ctx)
+		}()
+
 		// Check that the imported needs updating.
 		if c.GlobalBool("forceSkipMigrationCheck") {
 			logrus.Warn("skipping migration check")
@@ -96,8 +112,6 @@ func main() {
 		}
 
 		color.New(color.Bold).Printf("coral-importer (%s)\n", c.App.Version)
-
-		// os.Exit(0)
 
 		return nil
 	}
@@ -219,4 +233,6 @@ func main() {
 	if err := app.Run(os.Args); err != nil {
 		logrus.WithError(err).Fatal()
 	}
+
+	color.New(color.Bold, color.FgGreen).Printf("\nImport Completed, took %s\n", time.Since(start))
 }

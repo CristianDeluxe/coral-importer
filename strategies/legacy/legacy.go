@@ -10,6 +10,7 @@ import (
 	"github.com/coralproject/coral-importer/internal/utility/counter"
 	"github.com/coralproject/coral-importer/internal/warnings"
 	"github.com/coralproject/coral-importer/strategies"
+	"github.com/josharian/intern"
 	easyjson "github.com/mailru/easyjson"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -104,13 +105,13 @@ func Import(c strategies.Context) error {
 }
 
 func SeedCommentsReferences(ctx *Context) error {
-	bar, err := utility.NewLineCounter("Loading Comments", ctx.Filenames.Input.Comments)
+	bar, err := utility.NewLineCounter("(1/6) Loading Comments", ctx.Filenames.Input.Comments)
 	if err != nil {
 		return errors.Wrap(err, "could not count actions file")
 	}
 	defer bar.Finish()
 
-	return utility.ReadJSON(ctx.Filenames.Input.Comments, func(line int, data []byte) error {
+	return utility.ReadJSONConcurrently(ctx.Filenames.Input.Comments, func(line int, data []byte) error {
 		defer bar.Increment()
 
 		var in Comment
@@ -127,6 +128,9 @@ func SeedCommentsReferences(ctx *Context) error {
 			return nil
 		}
 
+		ctx.Mutex.Lock()
+		defer ctx.Mutex.Unlock()
+
 		ref, _ := ctx.FindOrCreateComment(in.ID)
 		ref.Status = TranslateCommentStatus(in.Status)
 		ref.StoryID = in.AssetID
@@ -139,7 +143,7 @@ func SeedCommentsReferences(ctx *Context) error {
 }
 
 func ReconstructFamilies(ctx *Context) {
-	bar := counter.New("Reconstructing Families", len(ctx.comments))
+	bar := counter.New("(3/6) Reconstructing Families", len(ctx.comments))
 	defer bar.Finish()
 
 	// Reconstruct all the family relationships from the parentID map.
@@ -156,13 +160,13 @@ func WriteCommentActions(ctx *Context) error {
 	}
 	defer commentActionsWriter.Close()
 
-	bar, err := utility.NewLineCounter("Writing Comment Actions", ctx.Filenames.Input.Actions)
+	bar, err := utility.NewLineCounter("(2/6) Writing Comment Actions", ctx.Filenames.Input.Actions)
 	if err != nil {
 		return errors.Wrap(err, "could not count actions file")
 	}
 	defer bar.Finish()
 
-	return utility.ReadJSON(ctx.Filenames.Input.Actions, func(line int, data []byte) error {
+	return utility.ReadJSONConcurrently(ctx.Filenames.Input.Actions, func(line int, data []byte) error {
 		defer bar.Increment()
 
 		// Parse the Action from the file.
@@ -190,6 +194,9 @@ func WriteCommentActions(ctx *Context) error {
 		// Translate the action to a comment action.
 		action := TranslateCommentAction(ctx.TenantID, ctx.SiteID, &in)
 
+		ctx.Mutex.Lock()
+		defer ctx.Mutex.Unlock()
+
 		// Find the comment's reference.
 		ref, ok := ctx.FindComment(action.CommentID)
 		if !ok {
@@ -200,11 +207,11 @@ func WriteCommentActions(ctx *Context) error {
 
 		story, _ := ctx.FindOrCreateStory(ref.StoryID)
 
-		ref.ActionCounts[action.ActionType]++
-		story.ActionCounts[action.ActionType]++
+		ref.ActionCounts[intern.String(action.ActionType)]++
+		story.ActionCounts[intern.String(action.ActionType)]++
 		if action.ActionType == "FLAG" {
-			ref.ActionCounts[action.ActionType+"__"+action.Reason]++
-			story.ActionCounts[action.ActionType+"__"+action.Reason]++
+			ref.ActionCounts[intern.String(action.ActionType+"__"+action.Reason)]++
+			story.ActionCounts[intern.String(action.ActionType+"__"+action.Reason)]++
 		}
 
 		if err := commentActionsWriter.Write(action); err != nil {
@@ -222,13 +229,13 @@ func WriteComments(ctx *Context) error {
 	}
 	defer commentsWriter.Close()
 
-	bar, err := utility.NewLineCounter("Writing Comments", ctx.Filenames.Input.Comments)
+	bar, err := utility.NewLineCounter("(4/6) Writing Comments", ctx.Filenames.Input.Comments)
 	if err != nil {
 		return errors.Wrap(err, "could not count comments file")
 	}
 	defer bar.Finish()
 
-	return utility.ReadJSON(ctx.Filenames.Input.Comments, func(line int, data []byte) error {
+	return utility.ReadJSONConcurrently(ctx.Filenames.Input.Comments, func(line int, data []byte) error {
 		defer bar.Increment()
 
 		// Parse the Comment from the file.
@@ -245,6 +252,9 @@ func WriteComments(ctx *Context) error {
 		}
 
 		comment := TranslateComment(ctx.TenantID, ctx.SiteID, &in)
+
+		ctx.Mutex.Lock()
+		defer ctx.Mutex.Unlock()
 
 		ref, ok := ctx.FindComment(comment.ID)
 		if !ok {
@@ -289,13 +299,13 @@ func WriteStories(ctx *Context) error {
 	}
 	defer storiesWriter.Close()
 
-	bar, err := utility.NewLineCounter("Writing Stories", ctx.Filenames.Input.Assets)
+	bar, err := utility.NewLineCounter("(5/6) Writing Stories", ctx.Filenames.Input.Assets)
 	if err != nil {
 		return errors.Wrap(err, "could not count assets file")
 	}
 	defer bar.Finish()
 
-	return utility.ReadJSON(ctx.Filenames.Input.Assets, func(line int, data []byte) error {
+	return utility.ReadJSONConcurrently(ctx.Filenames.Input.Assets, func(line int, data []byte) error {
 		defer bar.Increment()
 
 		// Parse the asset from the file.
@@ -307,6 +317,8 @@ func WriteStories(ctx *Context) error {
 		}
 
 		story := TranslateAsset(ctx.TenantID, ctx.SiteID, &in)
+
+		// Locking isn't needed as each of these stories is unique.
 
 		if ref, ok := ctx.FindStory(story.ID); ok {
 			// Get the status counts for this story.
@@ -330,6 +342,9 @@ func WriteStories(ctx *Context) error {
 			story.CommentCounts.ModerationQueue.Queues.Reported += ref.Flagged
 		}
 
+		ctx.Mutex.Lock()
+		defer ctx.Mutex.Unlock()
+
 		if err := storiesWriter.Write(story); err != nil {
 			return errors.Wrap(err, "couldn't write out story")
 		}
@@ -345,13 +360,13 @@ func WriteUsers(ctx *Context) error {
 	}
 	defer usersWriter.Close()
 
-	bar, err := utility.NewLineCounter("Writing Users", ctx.Filenames.Input.Users)
+	bar, err := utility.NewLineCounter("(6/6) Writing Users", ctx.Filenames.Input.Users)
 	if err != nil {
 		return errors.Wrap(err, "could not count users file")
 	}
 	defer bar.Finish()
 
-	return utility.ReadJSON(ctx.Filenames.Input.Users, func(line int, data []byte) error {
+	return utility.ReadJSONConcurrently(ctx.Filenames.Input.Users, func(line int, data []byte) error {
 		defer bar.Increment()
 
 		// Parse the user from the file.
@@ -364,10 +379,15 @@ func WriteUsers(ctx *Context) error {
 
 		user := TranslateUser(ctx.TenantID, &in)
 
+		// Locking isn't needed as each of these stories is unique.
+
 		// Get the status counts for this story.
 		if ref, ok := ctx.FindUser(user.ID); ok {
 			user.CommentCounts.Status = ref.StatusCounts
 		}
+
+		ctx.Mutex.Lock()
+		defer ctx.Mutex.Unlock()
 
 		if err := usersWriter.Write(user); err != nil {
 			return errors.Wrap(err, "couldn't write out user")

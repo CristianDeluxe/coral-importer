@@ -399,11 +399,11 @@ func easyjsonE08b5de9DecodeGithubComCoralprojectCoralImporterCommonCoral3(in *jl
 		}
 		switch key {
 		case "tenantID":
-			out.TenantID = string(in.String())
+			out.TenantID = string(in.StringIntern())
 		case "id":
 			out.ID = string(in.String())
 		case "siteID":
-			out.SiteID = string(in.String())
+			out.SiteID = string(in.StringIntern())
 		case "url":
 			out.URL = string(in.String())
 		case "commentCounts":

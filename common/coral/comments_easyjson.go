@@ -39,7 +39,7 @@ func easyjsonD09abad2DecodeGithubComCoralprojectCoralImporterCommonCoral(in *jle
 		case "score":
 			out.Score = float64(in.Float64())
 		case "model":
-			out.Model = string(in.String())
+			out.Model = string(in.StringIntern())
 		default:
 			in.SkipRecursive()
 		}
@@ -331,7 +331,7 @@ func easyjsonD09abad2DecodeGithubComCoralprojectCoralImporterCommonCoral3(in *jl
 		}
 		switch key {
 		case "type":
-			out.Type = string(in.String())
+			out.Type = string(in.StringIntern())
 		case "createdBy":
 			out.CreatedBy = string(in.String())
 		case "createdAt":
@@ -413,11 +413,11 @@ func easyjsonD09abad2DecodeGithubComCoralprojectCoralImporterCommonCoral4(in *jl
 		}
 		switch key {
 		case "tenantID":
-			out.TenantID = string(in.String())
+			out.TenantID = string(in.StringIntern())
 		case "id":
 			out.ID = string(in.String())
 		case "siteID":
-			out.SiteID = string(in.String())
+			out.SiteID = string(in.StringIntern())
 		case "ancestorIDs":
 			if in.IsNull() {
 				in.Skip()
@@ -473,7 +473,7 @@ func easyjsonD09abad2DecodeGithubComCoralprojectCoralImporterCommonCoral4(in *jl
 				in.Delim(']')
 			}
 		case "status":
-			out.Status = string(in.String())
+			out.Status = string(in.StringIntern())
 		case "actionCounts":
 			if in.IsNull() {
 				in.Skip()

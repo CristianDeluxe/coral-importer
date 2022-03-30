@@ -15,10 +15,10 @@ import (
 // Action is the Action as exported from MongoDB from legacy Talk.
 type Action struct {
 	ID         string                 `json:"id"`
-	ActionType string                 `json:"action_type"`
-	GroupID    string                 `json:"group_id"`
+	ActionType string                 `json:"action_type,intern"`
+	GroupID    string                 `json:"group_id,intern"`
 	ItemID     string                 `json:"item_id"`
-	ItemType   string                 `json:"item_type"`
+	ItemType   string                 `json:"item_type,intern"`
 	UserID     *string                `json:"user_id"`
 	Metadata   map[string]interface{} `json:"metadata"`
 	CreatedAt  coral.Time             `json:"created_at"`
@@ -48,7 +48,6 @@ func TranslateCommentAction(tenantID, siteID string, action *Action) *coral.Comm
 			commentAction.Reason = "COMMENT_DETECTED_RECENT_HISTORY"
 		case "TOXIC_COMMENT":
 			commentAction.Reason = "COMMENT_DETECTED_TOXIC"
-		case "":
 		default:
 		}
 
@@ -88,7 +87,7 @@ type CommentBodyHistory struct {
 type CommentTag struct {
 	AssignedBy *string `json:"assigned_by"`
 	Tag        struct {
-		Name string `json:"name"`
+		Name string `json:"name,intern"`
 	} `json:"tag"`
 	CreatedAt coral.Time `json:"created_at"`
 }
@@ -96,10 +95,10 @@ type CommentTag struct {
 type Comment struct {
 	ID            string `json:"id"`
 	AssetID       string `json:"asset_id"`
-	Status        string `json:"status"`
+	Status        string `json:"status,intern"`
 	StatusHistory []struct {
 		AssignedBy *string    `json:"assigned_by"`
-		Type       string     `json:"type"`
+		Type       string     `json:"type,intern"`
 		CreatedAt  coral.Time `json:"created_at"`
 	} `json:"status_history"`
 	Metadata *struct {
@@ -298,7 +297,7 @@ func TranslateAsset(tenantID, siteID string, asset *Asset) *coral.Story {
 
 type UserProfile struct {
 	ID       string `json:"id"`
-	Provider string `json:"provider"`
+	Provider string `json:"provider,intern"`
 }
 
 type UserToken struct {
@@ -328,17 +327,17 @@ type UserMetadata struct {
 type User struct {
 	ID           string        `json:"id"`
 	Username     string        `json:"username"`
-	Role         string        `json:"role"`
+	Role         string        `json:"role,intern"`
 	Password     string        `json:"password"`
 	IgnoredUsers []string      `json:"ignoresUsers"`
 	Profiles     []UserProfile `json:"profiles"`
 	Tokens       []UserToken   `json:"tokens"`
 	Status       struct {
 		Username struct {
-			Status  string `json:"status"`
+			Status  string `json:"status,intern"`
 			History []struct {
 				AssignedBy *string    `json:"assigned_by"`
-				Status     string     `json:"status"`
+				Status     string     `json:"status,intern"`
 				CreatedAt  coral.Time `json:"created_at"`
 			} `json:"history"`
 		} `json:"username"`
