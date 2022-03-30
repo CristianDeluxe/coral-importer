@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/coralproject/coral-importer/common/coral"
+	"github.com/coralproject/coral-importer/internal/warnings"
 	"github.com/coralproject/coral-importer/strategies/csv"
 	"github.com/coralproject/coral-importer/strategies/legacy"
 	"github.com/coralproject/coral-importer/strategies/livefyre"
@@ -233,6 +234,19 @@ func main() {
 	if err := app.Run(os.Args); err != nil {
 		logrus.WithError(err).Fatal()
 	}
+
+	warnings.Every(func(warning *warnings.Warning) {
+		occurrences := warning.Occurrences()
+		if occurrences == 0 {
+			return
+		}
+
+		logrus.WithFields(logrus.Fields{
+			"warning":     warning.String(),
+			"occurrences": occurrences,
+			"keys":        warning.Keys(),
+		}).Warn("warning occurred")
+	})
 
 	color.New(color.Bold, color.FgGreen).Printf("\nImport Completed, took %s\n", time.Since(start))
 }

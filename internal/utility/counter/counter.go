@@ -9,26 +9,22 @@ func New(title string, total int) *Counter {
 	color.New(color.Bold).Printf("\n%s\n", title)
 
 	return &Counter{
-		c:     pb.Full.Start(total),
-		total: total,
+		bar: pb.Full.Start(total),
 	}
 }
 
 type Counter struct {
-	c       *pb.ProgressBar
-	current int
-	total   int
+	bar *pb.ProgressBar
 }
 
 func (c *Counter) Increment() {
-	c.current++
-	c.c.Increment()
+	c.bar.Increment()
 }
 
 func (c *Counter) Finish() {
-	if c.current < c.total {
-		c.c.AddTotal(int64(c.current - c.total))
+	if c.bar.Current() < c.bar.Total() {
+		c.bar.AddTotal(c.bar.Current() - c.bar.Total())
 	}
 
-	c.c.Finish()
+	c.bar.Finish()
 }

@@ -148,8 +148,13 @@ func ReconstructFamilies(ctx *Context) {
 
 	// Reconstruct all the family relationships from the parentID map.
 	for commentID, comment := range ctx.comments {
-		ctx.Reconstructor.AddIDs(commentID, comment.ParentID)
 		bar.Increment()
+
+		if comment.ParentID == "" {
+			continue
+		}
+
+		ctx.Reconstructor.AddIDs(commentID, comment.ParentID)
 	}
 }
 

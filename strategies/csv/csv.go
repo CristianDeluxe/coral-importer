@@ -185,6 +185,10 @@ func Import(c strategies.Context) error {
 	// Reconstruct all the family relationships from the parentID map.
 	reconstructor := common.NewReconstructor()
 	for commentID, comment := range comments {
+		if comment.ParentID == "" {
+			continue
+		}
+
 		reconstructor.AddIDs(commentID, comment.ParentID)
 	}
 
