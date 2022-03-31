@@ -86,7 +86,7 @@ func main() {
 
 		f, err := os.OpenFile(c.String("log"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 		if err != nil {
-			return cli.NewExitError(err.Error(), 1)
+			return cli.Exit(err.Error(), 1)
 		}
 		logFile = f
 
