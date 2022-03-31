@@ -7,6 +7,7 @@ import (
 	"github.com/coralproject/coral-importer/common"
 	"github.com/coralproject/coral-importer/common/coral"
 	"github.com/coralproject/coral-importer/strategies"
+
 	"github.com/fatih/color"
 	"github.com/sirupsen/logrus"
 )

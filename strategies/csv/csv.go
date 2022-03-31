@@ -11,12 +11,12 @@ import (
 	"github.com/coralproject/coral-importer/common/coral"
 	"github.com/coralproject/coral-importer/internal/utility"
 	"github.com/coralproject/coral-importer/strategies"
-	"github.com/urfave/cli/v2"
 
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/pkg/errors"
 	uuid "github.com/satori/go.uuid"
 	"github.com/sirupsen/logrus"
+	"github.com/urfave/cli/v2"
 )
 
 type CommentReference struct {

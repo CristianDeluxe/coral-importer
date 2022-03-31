@@ -10,6 +10,7 @@ import (
 	"github.com/coralproject/coral-importer/internal/utility/counter"
 	"github.com/coralproject/coral-importer/internal/warnings"
 	"github.com/coralproject/coral-importer/strategies"
+
 	"github.com/josharian/intern"
 	easyjson "github.com/mailru/easyjson"
 	"github.com/pkg/errors"
