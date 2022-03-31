@@ -12,6 +12,7 @@ import (
 	"github.com/coralproject/coral-importer/internal/warnings"
 	"github.com/coralproject/coral-importer/strategies/csv"
 	"github.com/coralproject/coral-importer/strategies/legacy"
+	"github.com/coralproject/coral-importer/strategies/legacy/mapper"
 	"github.com/coralproject/coral-importer/strategies/livefyre"
 	"github.com/fatih/color"
 	"github.com/sirupsen/logrus"
@@ -73,6 +74,10 @@ func main() {
 			Name:  "disableMonotonicCursorTimes",
 			Usage: "used to disable monotonic cursor times which adds a offset to the same times to ensure all emitted times are unique",
 		},
+		&cli.DurationFlag{
+			Name:  "memoryStatFrequency",
+			Usage: "specify the frequency of measurements of memory usage, default is never",
+		},
 	}
 	app.Before = func(c *cli.Context) error {
 		// Configure the logger.
@@ -87,12 +92,15 @@ func main() {
 
 		logrus.SetOutput(f)
 
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+		memoryStatFrequency := c.Duration("memoryStatFrequency")
+		if memoryStatFrequency > 0 {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
 
-			StartLoggingMemoryStats(ctx)
-		}()
+				StartLoggingMemoryStats(ctx, memoryStatFrequency)
+			}()
+		}
 
 		// Check that the imported needs updating.
 		if c.Bool("forceSkipMigrationCheck") {
@@ -193,6 +201,27 @@ func main() {
 			Name:   "legacy",
 			Usage:  "a migrator designed to import data from previous versions of Coral",
 			Action: legacy.CLI,
+			Subcommands: []*cli.Command{
+				{
+					Name:   "map",
+					Usage:  "perform mapping of legacy fields into importable files",
+					Action: mapper.CLI,
+					Flags: []cli.Flag{
+						&cli.StringFlag{
+							Name:     "config",
+							EnvVars:  []string{"CORAL_MAPPER_CONFIG"},
+							Usage:    "configuration file for the SSO mapping process",
+							Required: true,
+						},
+						&cli.StringFlag{
+							Name:     "post",
+							EnvVars:  []string{"CORAL_MAPPER_POST_DIRECTORY"},
+							Usage:    "directory to write files that have been processed by the mapper",
+							Required: true,
+						},
+					},
+				},
+			},
 			Flags: []cli.Flag{
 				&cli.StringFlag{
 					Name:     "tenantID",
@@ -248,5 +277,16 @@ func main() {
 		}).Warn("warning occurred")
 	})
 
-	color.New(color.Bold, color.FgGreen).Printf("\nImport Completed, took %s\n", time.Since(start))
+	profiles := warnings.UnsupportedUserProfileProvider.Keys()
+	if len(profiles) > 1 {
+		logrus.WithFields(logrus.Fields{
+			"profiles": profiles,
+		}).Warn("multiple forign user profiles found, multiple passes of mapper required")
+	} else if len(profiles) == 1 {
+		logrus.WithFields(logrus.Fields{
+			"profiles": profiles,
+		}).Warn("forign user profile found, mapper required")
+	}
+
+	color.New(color.Bold, color.FgGreen).Printf("\nCompleted, took %s\n", time.Since(start))
 }

@@ -25,14 +25,14 @@ func LogMemoryStats(run int64) {
 	}).Debug("memory stats")
 }
 
-func StartLoggingMemoryStats(ctx context.Context) {
+func StartLoggingMemoryStats(ctx context.Context, frequency time.Duration) {
 	run := time.Now().Unix()
 
 	LogMemoryStats(run)
 
 	for {
 		select {
-		case <-time.After(30 * time.Second):
+		case <-time.After(frequency):
 			LogMemoryStats(run)
 		case <-ctx.Done():
 			LogMemoryStats(run)
