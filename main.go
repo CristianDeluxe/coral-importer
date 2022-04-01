@@ -283,5 +283,7 @@ func main() {
 		}).Warn("forign user profile found, mapper required")
 	}
 
-	color.New(color.Bold, color.FgGreen).Printf("\nCompleted, took %s\n", time.Since(start))
+	took := time.Since(start)
+	color.New(color.Bold, color.FgGreen).Printf("\nCompleted, took %s\n", took)
+	logrus.WithField("took", took).Info("completed")
 }
