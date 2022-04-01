@@ -8,7 +8,6 @@ import (
 	"github.com/coralproject/coral-importer/common"
 	"github.com/coralproject/coral-importer/internal/utility"
 	"github.com/coralproject/coral-importer/internal/utility/counter"
-	"github.com/coralproject/coral-importer/internal/warnings"
 	"github.com/coralproject/coral-importer/strategies"
 
 	"github.com/josharian/intern"
@@ -185,10 +184,6 @@ func WriteCommentActions(ctx *Context) error {
 
 		// Ignore the action if it's not a comment action.
 		if in.ItemType != "COMMENTS" {
-			warnings.NonCommentAction.Once(func() {
-				logrus.WithField("line", line).Warn("skipping non-comment action")
-			})
-
 			return nil
 		}
 
@@ -200,9 +195,6 @@ func WriteCommentActions(ctx *Context) error {
 		// Translate the action to a comment action.
 		action := TranslateCommentAction(ctx.TenantID, ctx.SiteID, &in)
 
-		ctx.Mutex.Lock()
-		defer ctx.Mutex.Unlock()
-
 		// Find the comment's reference.
 		ref, ok := ctx.FindComment(action.CommentID)
 		if !ok {
@@ -211,13 +203,19 @@ func WriteCommentActions(ctx *Context) error {
 
 		action.StoryID = ref.StoryID
 
+		ctx.Mutex.Lock()
+		defer ctx.Mutex.Unlock()
+
 		story, _ := ctx.FindOrCreateStory(ref.StoryID)
 
-		ref.ActionCounts[intern.String(action.ActionType)]++
-		story.ActionCounts[intern.String(action.ActionType)]++
+		actionType := intern.String(action.ActionType)
+
+		ref.ActionCounts[actionType]++
+		story.ActionCounts[actionType]++
 		if action.ActionType == "FLAG" {
-			ref.ActionCounts[intern.String(action.ActionType+"__"+action.Reason)]++
-			story.ActionCounts[intern.String(action.ActionType+"__"+action.Reason)]++
+			reason := intern.String(action.ActionType + "__" + action.Reason)
+			ref.ActionCounts[reason]++
+			story.ActionCounts[reason]++
 		}
 
 		if err := commentActionsWriter.Write(action); err != nil {
@@ -259,9 +257,6 @@ func WriteComments(ctx *Context) error {
 
 		comment := TranslateComment(ctx.TenantID, ctx.SiteID, &in)
 
-		ctx.Mutex.Lock()
-		defer ctx.Mutex.Unlock()
-
 		ref, ok := ctx.FindComment(comment.ID)
 		if !ok {
 			return errors.New("could not find comment ref")
@@ -277,6 +272,9 @@ func WriteComments(ctx *Context) error {
 		comment.ChildIDs = ctx.Reconstructor.GetChildren(comment.ID)
 		comment.ChildCount = len(comment.ChildIDs)
 		comment.AncestorIDs = ctx.Reconstructor.GetAncestors(comment.ID)
+
+		ctx.Mutex.Lock()
+		defer ctx.Mutex.Unlock()
 
 		user, _ := ctx.FindOrCreateUser(comment.AuthorID)
 		user.StatusCounts.Increment(comment.Status, 1)
@@ -385,7 +383,7 @@ func WriteUsers(ctx *Context) error {
 
 		user := TranslateUser(ctx.TenantID, &in)
 
-		// Locking isn't needed as each of these stories is unique.
+		// Locking isn't needed as each of these users is unique.
 
 		// Get the status counts for this story.
 		if ref, ok := ctx.FindUser(user.ID); ok {

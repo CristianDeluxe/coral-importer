@@ -13,7 +13,6 @@ func register(warning *Warning) {
 }
 
 func init() {
-	register(NonCommentAction)
 	register(UnsupportedDateFormat)
 	register(UnsupportedUserProfileProvider)
 	register(SSOIDMismatch)
