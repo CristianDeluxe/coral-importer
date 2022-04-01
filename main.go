@@ -208,12 +208,6 @@ func main() {
 					Action: mapper.CLI,
 					Flags: []cli.Flag{
 						&cli.StringFlag{
-							Name:     "config",
-							EnvVars:  []string{"CORAL_MAPPER_CONFIG"},
-							Usage:    "configuration file for the SSO mapping process",
-							Required: true,
-						},
-						&cli.StringFlag{
 							Name:     "post",
 							EnvVars:  []string{"CORAL_MAPPER_POST_DIRECTORY"},
 							Usage:    "directory to write files that have been processed by the mapper",
@@ -261,6 +255,7 @@ func main() {
 	}
 
 	if err := app.Run(os.Args); err != nil {
+		color.New(color.Bold, color.FgRed).Println(err.Error())
 		logrus.WithError(err).Fatal()
 	}
 

@@ -2,11 +2,11 @@ package mapper
 
 import (
 	"encoding/json"
-	"os"
 
 	"github.com/coralproject/coral-importer/common/coral"
 	"github.com/coralproject/coral-importer/internal/utility"
 	"github.com/coralproject/coral-importer/internal/warnings"
+	"github.com/kelseyhightower/envconfig"
 	"github.com/mailru/easyjson"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -43,26 +43,20 @@ type Mapper struct {
 }
 
 // LoadConfig will load the configuration from the specified file.
-func (m *Mapper) LoadConfig(configFilename string) error {
-	f, err := os.Open(configFilename)
-	if err != nil {
-		return errors.Wrap(err, "could not open --config file")
-	}
-	defer f.Close()
-
+func (m *Mapper) LoadConfig() error {
 	var config struct {
 		Users struct {
-			Username string `json:"username"`
+			Username string `envconfig:"username"`
 			SSO      struct {
-				ID       string `json:"id"`
-				Provider string `json:"provider"`
-				Email    string `json:"email"`
-			} `json:"sso"`
-		} `json:"users"`
+				ID       string `envconfig:"id"`
+				Provider string `envconfig:"provider"`
+				Email    string `envconfig:"email"`
+			} `envconfig:"sso"`
+		} `envconfig:"users"`
 	}
 
-	if err := json.NewDecoder(f).Decode(&config); err != nil {
-		return errors.Wrap(err, "could not load config file")
+	if err := envconfig.Process("CORAL_MAPPER", &config); err != nil {
+		return errors.Wrap(err, "could not load config ")
 	}
 
 	if config.Users.Username != "" {

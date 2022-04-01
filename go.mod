@@ -11,6 +11,7 @@ require (
 	github.com/go-playground/universal-translator v0.16.0 // indirect
 	github.com/icrowley/fake v0.0.0-20180203215853-4178557ae428 // indirect
 	github.com/josharian/intern v1.0.0
+	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/leebenson/conform v0.0.0-20190822094432-4c55492f71d7
 	github.com/leodido/go-urn v1.1.0 // indirect

@@ -35,7 +35,7 @@ func CLI(c *cli.Context) error {
 	m := New(dryRun)
 
 	// Load the configuration and compile the replacement expressions.
-	if err := m.LoadConfig(c.String("config")); err != nil {
+	if err := m.LoadConfig(); err != nil {
 		return errors.Wrap(err, "could not load the config")
 	}
 
