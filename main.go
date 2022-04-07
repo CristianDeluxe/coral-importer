@@ -13,7 +13,6 @@ import (
 	"github.com/coralproject/coral-importer/strategies/csv"
 	"github.com/coralproject/coral-importer/strategies/legacy"
 	"github.com/coralproject/coral-importer/strategies/legacy/mapper"
-	"github.com/coralproject/coral-importer/strategies/livefyre"
 	"github.com/fatih/color"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
@@ -158,42 +157,6 @@ func main() {
 				&cli.BoolFlag{
 					Name:  "dryRun",
 					Usage: "processes data to validate inputs without actually writing files",
-				},
-			},
-		},
-		{
-			Name:   "livefyre",
-			Usage:  "a migrator designed to migrate data from the LiveFyre platform",
-			Action: livefyre.CLI,
-			Flags: []cli.Flag{
-				&cli.StringFlag{
-					Name:     "tenantID",
-					Usage:    "ID of the Tenant to import for",
-					Required: true,
-				},
-				&cli.StringFlag{
-					Name:     "siteID",
-					Usage:    "ID of the Site to import for",
-					Required: true,
-				},
-				&cli.BoolFlag{
-					Name:  "sso",
-					Usage: "when true, enables adding the SSO profile to generated users with the ID of the User",
-				},
-				&cli.StringFlag{
-					Name:     "comments",
-					Usage:    "newline separated JSON input file containing comments",
-					Required: true,
-				},
-				&cli.StringFlag{
-					Name:     "users",
-					Usage:    "newline separated JSON input file containing users",
-					Required: true,
-				},
-				&cli.StringFlag{
-					Name:     "output",
-					Usage:    "folder where the outputted mongo files should be placed",
-					Required: true,
 				},
 			},
 		},
