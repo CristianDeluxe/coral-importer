@@ -2,10 +2,14 @@ package legacy
 
 import (
 	"path/filepath"
+	"sync"
 
 	"github.com/coralproject/coral-importer/common"
 	"github.com/coralproject/coral-importer/common/coral"
 	"github.com/coralproject/coral-importer/strategies"
+
+	"github.com/fatih/color"
+	"github.com/sirupsen/logrus"
 )
 
 type CommentRef struct {
@@ -41,7 +45,19 @@ func NewContext(c strategies.Context) *Context {
 	// from the MongoDB export.
 	input := c.String("input")
 
+	// dryRun indicates that the strategy should not write files and is used for
+	// validation.
+	dryRun := c.Bool("dryRun")
+
+	if dryRun {
+		color.New(color.Bold, color.FgRed).Println("--dryRun is enabled, files will not be written")
+		logrus.Warn("dry run is enabled, files will not be written")
+	}
+
+	var mutex sync.Mutex
+
 	return &Context{
+		DryRun:   dryRun,
 		TenantID: tenantID,
 		SiteID:   siteID,
 		Filenames: Filenames{
@@ -59,6 +75,7 @@ func NewContext(c strategies.Context) *Context {
 			},
 		},
 		Reconstructor: common.NewReconstructor(),
+		Mutex:         &mutex,
 		users:         map[string]*UserRef{},
 		stories:       map[string]*StoryRef{},
 		comments:      map[string]*CommentRef{},
@@ -85,10 +102,12 @@ type Filenames struct {
 }
 
 type Context struct {
+	DryRun        bool
 	TenantID      string
 	SiteID        string
 	Filenames     Filenames
 	Reconstructor *common.Reconstructor
+	Mutex         *sync.Mutex
 
 	users    map[string]*UserRef
 	stories  map[string]*StoryRef

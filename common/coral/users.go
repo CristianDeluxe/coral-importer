@@ -16,7 +16,7 @@ type UserNotifications struct {
 	OnFeatured      bool   `json:"onFeatured"`
 	OnStaffReplies  bool   `json:"onStaffReplies"`
 	OnModeration    bool   `json:"onModeration"`
-	DigestFrequency string `json:"digestFrequency" validate:"oneof=NONE DAILY HOURLY"`
+	DigestFrequency string `json:"digestFrequency,intern" validate:"oneof=NONE DAILY HOURLY"`
 }
 
 func NewUserNotifications() UserNotifications {
@@ -123,12 +123,12 @@ type UserCommentCounts struct {
 }
 
 type User struct {
-	TenantID         string                 `json:"tenantID" validate:"required"`
+	TenantID         string                 `json:"tenantID,intern" validate:"required"`
 	ID               string                 `json:"id" conform:"trim" validate:"required"`
 	Username         string                 `json:"username" validate:"required"`
 	Email            string                 `json:"email,omitempty" conform:"email,lower" validate:"email"`
 	Profiles         []UserProfile          `json:"profiles,omitempty"`
-	Role             string                 `json:"role" validate:"required,oneof=COMMENTER STAFF MODERATOR ADMIN"`
+	Role             string                 `json:"role,intern" validate:"required,oneof=COMMENTER STAFF MODERATOR ADMIN"`
 	Notifications    UserNotifications      `json:"notifications"`
 	ModeratorNotes   []string               `json:"moderatorNotes"`
 	Status           UserStatus             `json:"status"`

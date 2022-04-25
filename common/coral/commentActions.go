@@ -6,13 +6,13 @@ import "time"
 // CommentAction is the base Coral Comment Action that represents an action
 // against a Comment.
 type CommentAction struct {
-	TenantID          string                 `json:"tenantID" validate:"required"`
+	TenantID          string                 `json:"tenantID,intern" validate:"required"`
 	ID                string                 `json:"id" conform:"trim" validate:"required"`
-	SiteID            string                 `json:"siteID" validate:"required"`
-	ActionType        string                 `json:"actionType" validate:"oneof=REACTION DONT_AGREE FLAG,required"`
+	SiteID            string                 `json:"siteID,intern" validate:"required"`
+	ActionType        string                 `json:"actionType,intern" validate:"oneof=REACTION DONT_AGREE FLAG,required"`
 	CommentID         string                 `json:"commentID" validate:"required"`
 	CommentRevisionID string                 `json:"commentRevisionID" validate:"required"`
-	Reason            string                 `json:"reason,omitempty" validate:"omitempty,oneof= COMMENT_DETECTED_BANNED_WORD COMMENT_DETECTED_LINKS COMMENT_DETECTED_PREMOD_USER COMMENT_DETECTED_RECENT_HISTORY COMMENT_DETECTED_REPEAT_POST COMMENT_DETECTED_SPAM COMMENT_DETECTED_SUSPECT_WORD COMMENT_DETECTED_TOXIC COMMENT_REPORTED_OFFENSIVE COMMENT_REPORTED_OTHER COMMENT_REPORTED_SPAM"`
+	Reason            string                 `json:"reason,omitempty,intern" validate:"omitempty,oneof= COMMENT_DETECTED_BANNED_WORD COMMENT_DETECTED_LINKS COMMENT_DETECTED_PREMOD_USER COMMENT_DETECTED_RECENT_HISTORY COMMENT_DETECTED_REPEAT_POST COMMENT_DETECTED_SPAM COMMENT_DETECTED_SUSPECT_WORD COMMENT_DETECTED_TOXIC COMMENT_REPORTED_OFFENSIVE COMMENT_REPORTED_OTHER COMMENT_REPORTED_SPAM"`
 	AdditionalDetails string                 `json:"additionalDetails,omitempty"`
 	StoryID           string                 `json:"storyID" validate:"required"`
 	UserID            *string                `json:"userID" validate:"required"`

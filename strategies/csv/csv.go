@@ -11,12 +11,12 @@ import (
 	"github.com/coralproject/coral-importer/common/coral"
 	"github.com/coralproject/coral-importer/internal/utility"
 	"github.com/coralproject/coral-importer/strategies"
-	"github.com/urfave/cli"
 
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/pkg/errors"
 	uuid "github.com/satori/go.uuid"
 	"github.com/sirupsen/logrus"
+	"github.com/urfave/cli/v2"
 )
 
 type CommentReference struct {
@@ -53,6 +53,10 @@ func Import(c strategies.Context) error {
 	// input is the name of the folder where we are loading out collections
 	// from the MongoDB export.
 	input := c.String("input")
+
+	// dryRun indicates that the strategy should not write files and is used for
+	// validation.
+	dryRun := c.Bool("dryRun")
 
 	// auth is the identifier for the type of authentication profiles to be
 	// created for the users.
@@ -181,6 +185,10 @@ func Import(c strategies.Context) error {
 	// Reconstruct all the family relationships from the parentID map.
 	reconstructor := common.NewReconstructor()
 	for commentID, comment := range comments {
+		if comment.ParentID == "" {
+			continue
+		}
+
 		reconstructor.AddIDs(commentID, comment.ParentID)
 	}
 
@@ -189,7 +197,7 @@ func Import(c strategies.Context) error {
 	startedCommentsAt := time.Now()
 	logrus.Debug("processing comments")
 
-	commentsWriter, err := utility.NewJSONWriter(commentsOutputFileName)
+	commentsWriter, err := utility.NewJSONWriter(dryRun, commentsOutputFileName)
 	if err != nil {
 		return errors.Wrap(err, "could not create comment writer")
 	}
@@ -296,7 +304,7 @@ func Import(c strategies.Context) error {
 	startedUsersAt := time.Now()
 	logrus.Debug("processing users")
 
-	usersWriter, err := utility.NewJSONWriter(usersOutputFileName)
+	usersWriter, err := utility.NewJSONWriter(dryRun, usersOutputFileName)
 	if err != nil {
 		return errors.Wrap(err, "could not create users writer")
 	}
@@ -414,7 +422,7 @@ func Import(c strategies.Context) error {
 	startedStoriesAt := time.Now()
 	logrus.Debug("processing stories")
 
-	storiesWriter, err := utility.NewJSONWriter(storiesOutputFileName)
+	storiesWriter, err := utility.NewJSONWriter(dryRun, storiesOutputFileName)
 	if err != nil {
 		return errors.Wrap(err, "could not create story writer")
 	}

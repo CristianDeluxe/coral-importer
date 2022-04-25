@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/coralproject/coral-importer/internal/warnings"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -37,7 +38,9 @@ func (t *Time) UnmarshalJSON(data []byte) error {
 				// Try to handle the case where we get something that looks like
 				// this: {"$date":{"$numberLong":"-62075098782000"}}
 				if _, ok := obj["$numberLong"].(string); ok {
-					logrus.Warn("saw a date in the format: { $date: { $numberLong: \"-62075098782000\" } }")
+					warnings.UnsupportedDateFormat.Once(func() {
+						logrus.Warn("saw a date in the format: { $date: { $numberLong: \"-62075098782000\" } }")
+					})
 
 					return nil
 				}
@@ -45,7 +48,9 @@ func (t *Time) UnmarshalJSON(data []byte) error {
 				// Try to handle the case where we get something that looks like
 				// this: {"$date":{"$numberLong":-62075098782000"}
 				if _, ok := obj["$numberLong"].(float64); ok {
-					logrus.Warn("saw a date in the format: { $date: { $numberLong: \"-62075098782000\" } }")
+					warnings.UnsupportedDateFormat.Once(func() {
+						logrus.Warn("saw a date in the format: { $date: { $numberLong: \"-62075098782000\" } }")
+					})
 
 					return nil
 				}

@@ -120,7 +120,7 @@ func easyjsonD2b7633eDecodeGithubComCoralprojectCoralImporterStrategiesLegacy1(i
 		case "id":
 			out.ID = string(in.String())
 		case "provider":
-			out.Provider = string(in.String())
+			out.Provider = string(in.StringIntern())
 		default:
 			in.SkipRecursive()
 		}
@@ -533,7 +533,7 @@ func easyjsonD2b7633eDecodeGithubComCoralprojectCoralImporterStrategiesLegacy5(i
 		case "username":
 			out.Username = string(in.String())
 		case "role":
-			out.Role = string(in.String())
+			out.Role = string(in.StringIntern())
 		case "password":
 			out.Password = string(in.String())
 		case "ignoresUsers":
@@ -750,10 +750,10 @@ func (v *User) UnmarshalEasyJSON(l *jlexer.Lexer) {
 }
 func easyjsonD2b7633eDecode(in *jlexer.Lexer, out *struct {
 	Username struct {
-		Status  string `json:"status"`
+		Status  string `json:"status,intern"`
 		History []struct {
 			AssignedBy *string    `json:"assigned_by"`
-			Status     string     `json:"status"`
+			Status     string     `json:"status,intern"`
 			CreatedAt  coral.Time `json:"created_at"`
 		} `json:"history"`
 	} `json:"username"`
@@ -822,10 +822,10 @@ func easyjsonD2b7633eDecode(in *jlexer.Lexer, out *struct {
 }
 func easyjsonD2b7633eEncode(out *jwriter.Writer, in struct {
 	Username struct {
-		Status  string `json:"status"`
+		Status  string `json:"status,intern"`
 		History []struct {
 			AssignedBy *string    `json:"assigned_by"`
-			Status     string     `json:"status"`
+			Status     string     `json:"status,intern"`
 			CreatedAt  coral.Time `json:"created_at"`
 		} `json:"history"`
 	} `json:"username"`
@@ -1469,10 +1469,10 @@ func easyjsonD2b7633eEncode7(out *jwriter.Writer, in struct {
 	out.RawByte('}')
 }
 func easyjsonD2b7633eDecode1(in *jlexer.Lexer, out *struct {
-	Status  string `json:"status"`
+	Status  string `json:"status,intern"`
 	History []struct {
 		AssignedBy *string    `json:"assigned_by"`
-		Status     string     `json:"status"`
+		Status     string     `json:"status,intern"`
 		CreatedAt  coral.Time `json:"created_at"`
 	} `json:"history"`
 }) {
@@ -1495,7 +1495,7 @@ func easyjsonD2b7633eDecode1(in *jlexer.Lexer, out *struct {
 		}
 		switch key {
 		case "status":
-			out.Status = string(in.String())
+			out.Status = string(in.StringIntern())
 		case "history":
 			if in.IsNull() {
 				in.Skip()
@@ -1506,13 +1506,13 @@ func easyjsonD2b7633eDecode1(in *jlexer.Lexer, out *struct {
 					if !in.IsDelim(']') {
 						out.History = make([]struct {
 							AssignedBy *string    `json:"assigned_by"`
-							Status     string     `json:"status"`
+							Status     string     `json:"status,intern"`
 							CreatedAt  coral.Time `json:"created_at"`
 						}, 0, 1)
 					} else {
 						out.History = []struct {
 							AssignedBy *string    `json:"assigned_by"`
-							Status     string     `json:"status"`
+							Status     string     `json:"status,intern"`
 							CreatedAt  coral.Time `json:"created_at"`
 						}{}
 					}
@@ -1522,7 +1522,7 @@ func easyjsonD2b7633eDecode1(in *jlexer.Lexer, out *struct {
 				for !in.IsDelim(']') {
 					var v19 struct {
 						AssignedBy *string    `json:"assigned_by"`
-						Status     string     `json:"status"`
+						Status     string     `json:"status,intern"`
 						CreatedAt  coral.Time `json:"created_at"`
 					}
 					easyjsonD2b7633eDecode8(in, &v19)
@@ -1542,10 +1542,10 @@ func easyjsonD2b7633eDecode1(in *jlexer.Lexer, out *struct {
 	}
 }
 func easyjsonD2b7633eEncode1(out *jwriter.Writer, in struct {
-	Status  string `json:"status"`
+	Status  string `json:"status,intern"`
 	History []struct {
 		AssignedBy *string    `json:"assigned_by"`
-		Status     string     `json:"status"`
+		Status     string     `json:"status,intern"`
 		CreatedAt  coral.Time `json:"created_at"`
 	} `json:"history"`
 }) {
@@ -1577,7 +1577,7 @@ func easyjsonD2b7633eEncode1(out *jwriter.Writer, in struct {
 }
 func easyjsonD2b7633eDecode8(in *jlexer.Lexer, out *struct {
 	AssignedBy *string    `json:"assigned_by"`
-	Status     string     `json:"status"`
+	Status     string     `json:"status,intern"`
 	CreatedAt  coral.Time `json:"created_at"`
 }) {
 	isTopLevel := in.IsStart()
@@ -1609,7 +1609,7 @@ func easyjsonD2b7633eDecode8(in *jlexer.Lexer, out *struct {
 				*out.AssignedBy = string(in.String())
 			}
 		case "status":
-			out.Status = string(in.String())
+			out.Status = string(in.StringIntern())
 		case "created_at":
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.CreatedAt).UnmarshalJSON(data))
@@ -1626,7 +1626,7 @@ func easyjsonD2b7633eDecode8(in *jlexer.Lexer, out *struct {
 }
 func easyjsonD2b7633eEncode8(out *jwriter.Writer, in struct {
 	AssignedBy *string    `json:"assigned_by"`
-	Status     string     `json:"status"`
+	Status     string     `json:"status,intern"`
 	CreatedAt  coral.Time `json:"created_at"`
 }) {
 	out.RawByte('{')
@@ -1748,7 +1748,7 @@ func (v *CommentTag) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjsonD2b7633eDecodeGithubComCoralprojectCoralImporterStrategiesLegacy6(l, v)
 }
 func easyjsonD2b7633eDecode9(in *jlexer.Lexer, out *struct {
-	Name string `json:"name"`
+	Name string `json:"name,intern"`
 }) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
@@ -1769,7 +1769,7 @@ func easyjsonD2b7633eDecode9(in *jlexer.Lexer, out *struct {
 		}
 		switch key {
 		case "name":
-			out.Name = string(in.String())
+			out.Name = string(in.StringIntern())
 		default:
 			in.SkipRecursive()
 		}
@@ -1781,7 +1781,7 @@ func easyjsonD2b7633eDecode9(in *jlexer.Lexer, out *struct {
 	}
 }
 func easyjsonD2b7633eEncode9(out *jwriter.Writer, in struct {
-	Name string `json:"name"`
+	Name string `json:"name,intern"`
 }) {
 	out.RawByte('{')
 	first := true
@@ -1892,7 +1892,7 @@ func easyjsonD2b7633eDecodeGithubComCoralprojectCoralImporterStrategiesLegacy8(i
 		case "asset_id":
 			out.AssetID = string(in.String())
 		case "status":
-			out.Status = string(in.String())
+			out.Status = string(in.StringIntern())
 		case "status_history":
 			if in.IsNull() {
 				in.Skip()
@@ -1903,13 +1903,13 @@ func easyjsonD2b7633eDecodeGithubComCoralprojectCoralImporterStrategiesLegacy8(i
 					if !in.IsDelim(']') {
 						out.StatusHistory = make([]struct {
 							AssignedBy *string    `json:"assigned_by"`
-							Type       string     `json:"type"`
+							Type       string     `json:"type,intern"`
 							CreatedAt  coral.Time `json:"created_at"`
 						}, 0, 1)
 					} else {
 						out.StatusHistory = []struct {
 							AssignedBy *string    `json:"assigned_by"`
-							Type       string     `json:"type"`
+							Type       string     `json:"type,intern"`
 							CreatedAt  coral.Time `json:"created_at"`
 						}{}
 					}
@@ -1919,7 +1919,7 @@ func easyjsonD2b7633eDecodeGithubComCoralprojectCoralImporterStrategiesLegacy8(i
 				for !in.IsDelim(']') {
 					var v22 struct {
 						AssignedBy *string    `json:"assigned_by"`
-						Type       string     `json:"type"`
+						Type       string     `json:"type,intern"`
 						CreatedAt  coral.Time `json:"created_at"`
 					}
 					easyjsonD2b7633eDecode10(in, &v22)
@@ -2319,7 +2319,7 @@ func easyjsonD2b7633eEncode12(out *jwriter.Writer, in struct {
 }
 func easyjsonD2b7633eDecode10(in *jlexer.Lexer, out *struct {
 	AssignedBy *string    `json:"assigned_by"`
-	Type       string     `json:"type"`
+	Type       string     `json:"type,intern"`
 	CreatedAt  coral.Time `json:"created_at"`
 }) {
 	isTopLevel := in.IsStart()
@@ -2351,7 +2351,7 @@ func easyjsonD2b7633eDecode10(in *jlexer.Lexer, out *struct {
 				*out.AssignedBy = string(in.String())
 			}
 		case "type":
-			out.Type = string(in.String())
+			out.Type = string(in.StringIntern())
 		case "created_at":
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.CreatedAt).UnmarshalJSON(data))
@@ -2368,7 +2368,7 @@ func easyjsonD2b7633eDecode10(in *jlexer.Lexer, out *struct {
 }
 func easyjsonD2b7633eEncode10(out *jwriter.Writer, in struct {
 	AssignedBy *string    `json:"assigned_by"`
-	Type       string     `json:"type"`
+	Type       string     `json:"type,intern"`
 	CreatedAt  coral.Time `json:"created_at"`
 }) {
 	out.RawByte('{')
@@ -2844,13 +2844,13 @@ func easyjsonD2b7633eDecodeGithubComCoralprojectCoralImporterStrategiesLegacy10(
 		case "id":
 			out.ID = string(in.String())
 		case "action_type":
-			out.ActionType = string(in.String())
+			out.ActionType = string(in.StringIntern())
 		case "group_id":
-			out.GroupID = string(in.String())
+			out.GroupID = string(in.StringIntern())
 		case "item_id":
 			out.ItemID = string(in.String())
 		case "item_type":
-			out.ItemType = string(in.String())
+			out.ItemType = string(in.StringIntern())
 		case "user_id":
 			if in.IsNull() {
 				in.Skip()

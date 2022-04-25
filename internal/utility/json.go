@@ -4,32 +4,45 @@ import (
 	"bufio"
 	"io"
 	"os"
+	"runtime"
+	"sync"
 
 	"github.com/mailru/easyjson"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 )
 
-func NewJSONWriter(fileName string) (*JSONWriter, error) {
-	f, err := os.Create(fileName)
+type Writer interface {
+	Write(doc easyjson.Marshaler) error
+	Close() error
+}
+
+type nopJSONWriter struct{}
+
+func (d *nopJSONWriter) Write(doc easyjson.Marshaler) error { return nil }
+
+func (d *nopJSONWriter) Close() error { return nil }
+
+func NewJSONWriter(dryRun bool, fileName string) (Writer, error) {
+	if dryRun {
+		return &nopJSONWriter{}, nil
+	}
+
+	dest, err := os.Create(fileName)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not create file for writing")
 	}
 
-	w := bufio.NewWriter(f)
+	w := bufio.NewWriter(dest)
 
 	return &JSONWriter{
-		f:        f,
-		w:        w,
-		filename: fileName,
+		f: dest,
+		w: w,
 	}, nil
 }
 
 type JSONWriter struct {
-	f         *os.File
-	w         *bufio.Writer
-	documents uint64
-	filename  string
+	f io.WriteCloser
+	w *bufio.Writer
 }
 
 func (c *JSONWriter) Write(doc easyjson.Marshaler) error {
@@ -37,11 +50,9 @@ func (c *JSONWriter) Write(doc easyjson.Marshaler) error {
 		return errors.Wrap(err, "could not marshal output")
 	}
 
-	if _, err := c.w.WriteString("\n"); err != nil {
+	if _, err := c.w.WriteRune('\n'); err != nil {
 		return errors.Wrap(err, "could not write newline")
 	}
-
-	c.documents++
 
 	return nil
 }
@@ -55,12 +66,51 @@ func (c *JSONWriter) Close() error {
 		return errors.Wrap(err, "could not close file")
 	}
 
-	logrus.WithField("documents", c.documents).WithField("fileName", c.filename).Info("wrote documents")
-
 	return nil
 }
 
 type JSONReaderFn func(line int, data []byte) error
+
+type Line struct {
+	LineNumber int
+	Data       []byte
+}
+
+func ReadJSONConcurrently(fileName string, fn JSONReaderFn) error {
+	count := runtime.NumCPU()
+	ch := make(chan Line, count)
+	var wg sync.WaitGroup
+
+	wg.Add(count)
+	for i := 0; i < count; i++ {
+		go func() {
+			for line := range ch {
+				if err := fn(line.LineNumber, line.Data); err != nil {
+					panic(err)
+				}
+			}
+
+			wg.Done()
+		}()
+	}
+
+	if err := ReadJSON(fileName, func(line int, data []byte) error {
+
+		ch <- Line{
+			LineNumber: line,
+			Data:       data,
+		}
+
+		return nil
+	}); err != nil {
+		return err
+	}
+
+	close(ch)
+	wg.Wait()
+
+	return nil
+}
 
 func ReadJSON(fileName string, fn JSONReaderFn) error {
 	f, err := os.Open(fileName)
@@ -88,6 +138,12 @@ func ReadJSON(fileName string, fn JSONReaderFn) error {
 
 		// Increment the line count.
 		lines++
+
+		// We're reading JSON, and if the document is less than or equal to two
+		// characters there is no content to read!
+		if len(line) <= 2 {
+			continue
+		}
 
 		// Send the input to a processor.
 		if err := fn(lines, []byte(line)); err != nil {

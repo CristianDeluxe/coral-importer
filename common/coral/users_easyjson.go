@@ -918,7 +918,7 @@ func easyjson84c0690eDecodeGithubComCoralprojectCoralImporterCommonCoral9(in *jl
 		case "onModeration":
 			out.OnModeration = bool(in.Bool())
 		case "digestFrequency":
-			out.DigestFrequency = string(in.String())
+			out.DigestFrequency = string(in.StringIntern())
 		default:
 			in.SkipRecursive()
 		}
@@ -1271,7 +1271,7 @@ func easyjson84c0690eDecodeGithubComCoralprojectCoralImporterCommonCoral13(in *j
 		}
 		switch key {
 		case "tenantID":
-			out.TenantID = string(in.String())
+			out.TenantID = string(in.StringIntern())
 		case "id":
 			out.ID = string(in.String())
 		case "username":
@@ -1302,7 +1302,7 @@ func easyjson84c0690eDecodeGithubComCoralprojectCoralImporterCommonCoral13(in *j
 				in.Delim(']')
 			}
 		case "role":
-			out.Role = string(in.String())
+			out.Role = string(in.StringIntern())
 		case "notifications":
 			(out.Notifications).UnmarshalEasyJSON(in)
 		case "moderatorNotes":

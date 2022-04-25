@@ -6,6 +6,7 @@ builds:
       - linux
     goarch:
       - amd64
+      - arm64
 
 archives:
   - files:
@@ -15,6 +16,7 @@ release:
   github:
     owner: coralproject
     name: coral-importer
+  prerelease: auto
 
 checksum:
   name_template: "checksums.txt"
