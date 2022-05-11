@@ -2,6 +2,11 @@
 
 ![Test](https://github.com/coralproject/coral-importer/workflows/Test/badge.svg)
 
+The coral-importer tool supports transforming data to be compatible with the current version of [coral](https://github.com/coralproject/talk/releases). The coral-importer supports two types of transformations, called "strategies": 
+
+1. [Legacy (Coral Talk v4.x) data exported directly from mongo](https://github.com/coralproject/coral-importer#legacy)
+2. [CSV data exported from other commenting platforms. Data will have to conform to the expected format](https://github.com/coralproject/coral-importer#csv)
+
 Visit the [Releases](https://github.com/coralproject/coral-importer/releases) page
 to download a release of the `coral-importer` tool.
 
@@ -9,6 +14,8 @@ to download a release of the `coral-importer` tool.
 
 
 ### Legacy
+
+Step-by-step documentation for the legacy migration process is available in the [Coral Documentation](https://docs.coralproject.net/migrate-from-talk)
 
 This import strategy is designed to migrate data from Coral ^4.12.0 to
 ^6.17.1.
