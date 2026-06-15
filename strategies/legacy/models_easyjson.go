@@ -1947,21 +1947,23 @@ func easyjsonD2b7633eDecodeGithubComCoralprojectCoralImporterStrategiesLegacy8(i
 			if in.IsNull() {
 				in.Skip()
 				out.BodyHistory = nil
-			} else {
+			} else if in.IsDelim('{') {
+				// Handle the single object case
+				var singleHistory CommentBodyHistory
+				in.Delim('{')
+				easyjsonD2b7633eDecodeGithubComCoralprojectCoralImporterStrategiesLegacy7(in, &singleHistory)
+				in.Delim('}')
+				out.BodyHistory = []CommentBodyHistory{singleHistory} // Convert single object to array
+			} else if in.IsDelim('[') {
+				// Handle the array case
 				in.Delim('[')
 				if out.BodyHistory == nil {
-					if !in.IsDelim(']') {
-						out.BodyHistory = make([]CommentBodyHistory, 0, 1)
-					} else {
-						out.BodyHistory = []CommentBodyHistory{}
-					}
-				} else {
-					out.BodyHistory = (out.BodyHistory)[:0]
+					out.BodyHistory = make([]CommentBodyHistory, 0, 1)
 				}
 				for !in.IsDelim(']') {
-					var v23 CommentBodyHistory
-					(v23).UnmarshalEasyJSON(in)
-					out.BodyHistory = append(out.BodyHistory, v23)
+					var v CommentBodyHistory
+					(v).UnmarshalEasyJSON(in)
+					out.BodyHistory = append(out.BodyHistory, v)
 					in.WantComma()
 				}
 				in.Delim(']')
