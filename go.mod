@@ -3,7 +3,7 @@ module github.com/coralproject/coral-importer
 go 1.26.0
 
 require (
-	github.com/cheggaaa/pb/v3 v3.2.1
+	github.com/cheggaaa/pb/v3 v3.3.0
 	github.com/fatih/color v1.19.0
 	github.com/josharian/intern v1.0.0
 	github.com/kelseyhightower/envconfig v1.4.0
@@ -32,8 +32,8 @@ require (
 	github.com/mattn/go-isatty v0.0.24 // indirect
 	github.com/mattn/go-runewidth v0.0.31 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
-	github.com/xrash/smetrics v0.0.0-20250705151800-55b8f293f342 // indirect
-	golang.org/x/net v0.61.0 // indirect
+	github.com/xrash/smetrics v0.0.0-20261013231157-39c47d93efba // indirect
+	golang.org/x/net v0.62.0 // indirect
 	golang.org/x/sys v0.49.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
